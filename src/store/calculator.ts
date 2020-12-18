@@ -39,6 +39,8 @@ export interface Box {
 
     connectorRight: boolean;
     connectorLeft: boolean;
+
+    backSide: boolean;
 }
 
 export interface Shelf {

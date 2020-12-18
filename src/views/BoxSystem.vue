@@ -125,7 +125,8 @@
 
         <div>
             <h3>SVG:</h3>
-            <div v-html="svg"></div>
+            <div v-html="svgLeft"></div>
+             <div v-html="svgRight"></div>
         </div>
 
 
@@ -328,6 +329,8 @@ export default {
             connectorRight: false,
             connectorLeft: false,
 
+            backSide:false,
+
             get name() {return `Box ${basicBox.gridSizeX}.${basicBox.gridSizeX}`},
         });
 
@@ -357,6 +360,7 @@ export default {
 
                 connectorRight: false,
                 connectorLeft: false,
+                backSide: false,
 
                 get name() {return `Box ${box.gridSizeY}.${box.gridSizeX}`},
             }
@@ -378,6 +382,8 @@ export default {
 
                 connectorRight: false,
                 connectorLeft: false,
+
+                backSide: false,
 
                 get name(){return `Box ${box.gridSizeY}.${box.gridSizeX}`},
             }
@@ -406,6 +412,8 @@ export default {
                         connectorRight: false,
                         connectorLeft: false,
 
+                        backSide: false,
+
                         get name() {return `Box${hIndex + 1}.${wIndex + 1}`},
                     }
 
@@ -424,70 +432,74 @@ export default {
         });
 
         function boxCoordinates (box: Box, material: Material) {
-            const boxSide = (connector: boolean) => {
+            const boxSide = (connertor: boolean, side: 'LEFT' | 'RIGHT') => {
                 const boxTenonSize = 10;
                 const boxPositiveTenons = 2;
                 const boxNegativeTenons = boxPositiveTenons + 1;
                 const boxTenonsSum = boxPositiveTenons + boxNegativeTenons;
+                const slotOffSetEdgeX = 20;
+                const slotOffSetEdgeY = 10 + boxTenonSize;
+                const slotHeight = material.thickness;
 
 
                 const bottomLinePoints: [number, number][] = [];
 
                 for (let i = 0; i < boxTenonsSum; i++) {
-                    bottomLinePoints.push([(unref(box.depth) / boxTenonsSum) * i, (i % 2) !== 0 ? boxTenonSize : 0]);
-                    bottomLinePoints.push([(unref(box.depth) / boxTenonsSum) * (i + 1), (i % 2) !== 0 ? boxTenonSize : 0])
+                    bottomLinePoints.push([(box.depth / boxTenonsSum) * i, (i % 2) !== 0 ? boxTenonSize : 0]);
+                    bottomLinePoints.push([(box.depth / boxTenonsSum) * (i + 1), (i % 2) !== 0 ? boxTenonSize : 0])
                 }
 
                 const topLinePoints: [number, number][] = [];
 
                 for (let i = 0; i < boxTenonsSum; i++) {
-                    topLinePoints.push([(unref(box.depth) / boxTenonsSum) * i, box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
-                    topLinePoints.push([(unref(box.depth) / boxTenonsSum) * (i + 1), box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
+                    topLinePoints.push([(box.depth / boxTenonsSum) * i, box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
+                    topLinePoints.push([(box.depth / boxTenonsSum) * (i + 1), box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
                 }
                 // debugger;
 
                 const topLine = new makerjs.models.ConnectTheDots(false, topLinePoints);
                 const bottomLine = new makerjs.models.ConnectTheDots(false, bottomLinePoints);
                 const leftLine = new makerjs.paths.Line([0,0], [0, box.height - boxTenonSize]);
-                const rightLine = new makerjs.paths.Line([unref(box.depth),0], [unref(box.depth), box.height - boxTenonSize]);
+                const rightLine = new makerjs.paths.Line([box.depth,0], [box.depth, (box.height - boxTenonSize)]);
                 // debugger;
 
-                function slotPoints(offSetEdgeX: number, offSetEdgeY: number): makerjs.IModel[] {
-                    const height = material.thickness;
-                    const width = (box.width - offSetEdgeX) / 3;
-                    const _offSetEdgeY = offSetEdgeY + boxTenonSize;
+                function slotPointsHorizontal(): makerjs.IModel[] {
+                    const height = slotHeight;
+                    const width = box.depth / boxTenonsSum;
+                    const offSetEdgeY = slotOffSetEdgeY;
+                    const offSetEdgeX = slotOffSetEdgeX*2;
 
                     const bottomLeft: [number, number][] = [
-                        [offSetEdgeX, _offSetEdgeY],
-                        [width, _offSetEdgeY],
-                        [width, _offSetEdgeY + height],
-                        [offSetEdgeX, _offSetEdgeY + height],
-                        [offSetEdgeX, _offSetEdgeY]];
+                        [offSetEdgeX, offSetEdgeY],
+                        [width + offSetEdgeX, offSetEdgeY],
+                        [width + offSetEdgeX, offSetEdgeY + height],
+                        [offSetEdgeX, offSetEdgeY + height],
+                        [offSetEdgeX, offSetEdgeY]];
                     const bottomRight: [number, number][] = [
-                        [(box.depth) - offSetEdgeX - width, _offSetEdgeY],
-                        [(box.depth) - offSetEdgeX, _offSetEdgeY],
-                        [(box.depth) - offSetEdgeX, _offSetEdgeY + height],
-                        [(box.depth) - offSetEdgeX - width, _offSetEdgeY + height],
-                        [(box.depth) - offSetEdgeX - width, _offSetEdgeY]];
+                        [(box.depth) - offSetEdgeX - width, offSetEdgeY],
+                        [(box.depth) - offSetEdgeX, offSetEdgeY],
+                        [(box.depth) - offSetEdgeX, offSetEdgeY + height],
+                        [(box.depth) - offSetEdgeX - width, offSetEdgeY + height],
+                        [(box.depth) - offSetEdgeX - width, offSetEdgeY]];
                     const topLeft: [number, number][] = [
-                        [offSetEdgeX, box.height - _offSetEdgeY - height],
-                        [width, box.height - _offSetEdgeY - height],
-                        [width, box.height - _offSetEdgeY],
-                        [offSetEdgeX, box.height - _offSetEdgeY],
-                        [offSetEdgeX, box.height - _offSetEdgeY - height]];
+                        [offSetEdgeX, box.height - offSetEdgeY - height],
+                        [width + offSetEdgeX, box.height - offSetEdgeY - height],
+                        [width + offSetEdgeX, box.height - offSetEdgeY],
+                        [offSetEdgeX, box.height - offSetEdgeY],
+                        [offSetEdgeX, box.height - offSetEdgeY - height]];
                     const topRight: [number, number][] = [
-                        [(box.depth) - (offSetEdgeX + width), box.height - _offSetEdgeY - height],
-                        [(box.depth) - offSetEdgeX, box.height - _offSetEdgeY - height],
-                        [(box.depth) - offSetEdgeX, box.height - _offSetEdgeY],
-                        [(box.depth) - (offSetEdgeX + width), box.height - _offSetEdgeY],
-                        [(box.depth) - (offSetEdgeX + width), box.height - _offSetEdgeY - height]];
+                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY - height],
+                        [(box.depth) - offSetEdgeX, box.height - offSetEdgeY - height],
+                        [(box.depth) - offSetEdgeX, box.height - offSetEdgeY],
+                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY],
+                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY - height]];
 
                     const bottomMid: [number, number][] = [
-                        [(box.depth)/2 - width/2, _offSetEdgeY],
-                        [width, _offSetEdgeY],
-                        [width, _offSetEdgeY + height],
-                        [(box.depth)/2 - width/2, _offSetEdgeY + height],
-                        [(box.depth)/2 - width/2, _offSetEdgeY],
+                        [(box.depth)/2 - width/2, offSetEdgeY],
+                        [(box.depth)/2 + width/2, offSetEdgeY],
+                        [(box.depth)/2 + width/2, offSetEdgeY + height],
+                        [(box.depth)/2 - width/2, offSetEdgeY + height],
+                        [(box.depth)/2 - width/2, offSetEdgeY],
                     ];
 
                     const models: IModel[] =[
@@ -497,16 +509,47 @@ export default {
                         new makerjs.models.ConnectTheDots(true, topRight)
                     ];
 
-                    if (connector) models.push(new makerjs.models.ConnectTheDots(true, bottomMid));
+                    if(connertor) models.push(new makerjs.models.ConnectTheDots(true, bottomMid));
 
                     return models;
 
+                }
+
+                function slotPointsVertical(side: 'LEFT' | 'RIGHT'): makerjs.IModel[] {
+                    const height = box.height / boxTenonsSum;
+                    const width = slotHeight;
+                    const offSetEdgeY = slotOffSetEdgeY + width;
+                    const offSetEdgeX = slotOffSetEdgeX;
+                    const xPos = side === 'RIGHT' ? width + offSetEdgeX/2 : box.depth - offSetEdgeX /2;
+
+                     const top: [number, number][] = [
+                        [ xPos, box.height - offSetEdgeY - height],
+                        [ xPos - width, box.height - offSetEdgeY - height],
+                        [ xPos - width, box.height - offSetEdgeY],
+                        [ xPos, box.height - offSetEdgeY],
+                        [ xPos, box.height - offSetEdgeY - height]];
+
+                    const bottom: [number, number][] = [
+                        [ xPos, offSetEdgeY],
+                        [ xPos - width, offSetEdgeY],
+                        [ xPos - width, offSetEdgeY + height],
+                        [ xPos, offSetEdgeY + height],
+                        [ xPos, offSetEdgeY]];
+
+                     const models: IModel[] =[
+                        new makerjs.models.ConnectTheDots(true, top),
+                        new makerjs.models.ConnectTheDots(true, bottom),
+                    ];
+
+                    return models;
                 }
 
                 const boxPaths = {
                     models: {
                         top: topLine,
                         bottom: bottomLine,
+                        slotPointsVerticalTop: slotPointsVertical(side)[0],
+                        slotPointsVerticalBottom: slotPointsVertical(side)[1],
                     },
                     paths: {
                         left: leftLine,
@@ -514,7 +557,7 @@ export default {
                     },
                 };
 
-                boxPaths.models = Object.assign({}, boxPaths.models, slotPoints(10,10));
+                boxPaths.models = Object.assign( boxPaths.models, slotPointsHorizontal());
 
                 return boxPaths;
 
@@ -522,13 +565,15 @@ export default {
             // debugger;
 
             return  {
-                leftSide: boxSide(box.connectorLeft),
+                leftSide: boxSide(box.connectorLeft, 'LEFT'),
+                rightSide: boxSide(box.connectorLeft, 'RIGHT'),
             };
 
         }
         // const svg1 = boxCoordinates(possibleBoxes.value[0], material).leftSide;
         // debugger;
-        const svg = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0] as unknown as Box, material).leftSide);
+        const svgLeft = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0] as unknown as Box, material).leftSide);
+        const svgRight = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0] as unknown as Box, material).rightSide);
         // debugger;
 
         const testUserBoxes = reactive<Array<any>>([
@@ -557,7 +602,8 @@ export default {
             // userBoxesEmptySpaceBoxes,
             possibleUserBoxDimesnions,
             sameUserBoxes,
-            svg,
+            svgLeft,
+            svgRight,
 
             getGridStyle(box: Box): object {
                 // if(box.gridX === 0) box.gridX = Math.round(Math.random() * (10 - 1) + 1);
