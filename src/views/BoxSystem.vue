@@ -137,7 +137,7 @@
 <script lang="ts">
 import {computed, reactive, ref, unref} from 'vue';
 
-import {Box, ProcessingArea, Shelf, BoxDimensions, isValidLongHeightAtStep, isValidLongWidthAtStep, isValidShortHeightAtStep, isValidShortWidthAtStep, isValidShortDepth, isValidLongDepth, Material} from '../store/calculator';
+import {Box, ProcessingArea, Shelf, BoxDimensions, isValidLongHeightAtStep, isValidLongWidthAtStep, isValidShortHeightAtStep, isValidShortWidthAtStep, isValidShortDepth, isValidLongDepth, Material, Connector} from '../store/calculator';
 
 import makerjs, { IModel } from 'makerjs';
 
@@ -326,8 +326,7 @@ export default {
             gridX: 0,
             gridY: 0,
 
-            connectorRight: false,
-            connectorLeft: false,
+            connector: 'NONE',
 
             backSide:false,
 
@@ -358,8 +357,7 @@ export default {
                 gridX: 0,
                 gridY: 0,
 
-                connectorRight: false,
-                connectorLeft: false,
+                connector: 'NONE',
                 backSide: false,
 
                 get name() {return `Box ${box.gridSizeY}.${box.gridSizeX}`},
@@ -380,8 +378,7 @@ export default {
                 gridX: gridX,
                 gridY: gridY,
 
-                connectorRight: false,
-                connectorLeft: false,
+                connector: 'NONE',
 
                 backSide: false,
 
@@ -409,9 +406,7 @@ export default {
                         get gridSizeX() {return wIndex + 1},
                         get gridSizeY() {return hIndex + 1},
 
-                        connectorRight: false,
-                        connectorLeft: false,
-
+                        connector: 'NONE',
                         backSide: false,
 
                         get name() {return `Box${hIndex + 1}.${wIndex + 1}`},
@@ -432,7 +427,7 @@ export default {
         });
 
         function boxCoordinates (box: Box, material: Material) {
-            const boxSide = (connertor: boolean, side: 'LEFT' | 'RIGHT') => {
+            const boxSide = (connector: Connector) => {
                 const boxTenonSize = 10;
                 const boxPositiveTenons = 2;
                 const boxNegativeTenons = boxPositiveTenons + 1;
@@ -509,18 +504,18 @@ export default {
                         new makerjs.models.ConnectTheDots(true, topRight)
                     ];
 
-                    if(connertor) models.push(new makerjs.models.ConnectTheDots(true, bottomMid));
+                    if(connector) models.push(new makerjs.models.ConnectTheDots(true, bottomMid));
 
                     return models;
 
                 }
 
-                function slotPointsVertical(side: 'LEFT' | 'RIGHT'): makerjs.IModel[] {
+                function slotPointsVertical(connector: Connector): makerjs.IModel[] {
                     const height = box.height / boxTenonsSum;
                     const width = slotHeight;
                     const offSetEdgeY = slotOffSetEdgeY + width;
                     const offSetEdgeX = slotOffSetEdgeX;
-                    const xPos = side === 'RIGHT' ? width + offSetEdgeX/2 : box.depth - offSetEdgeX /2;
+                    const xPos = connector === 'RIGHT' ? width + offSetEdgeX/2 : box.depth - offSetEdgeX /2;
 
                      const top: [number, number][] = [
                         [ xPos, box.height - offSetEdgeY - height],
@@ -548,8 +543,8 @@ export default {
                     models: {
                         top: topLine,
                         bottom: bottomLine,
-                        slotPointsVerticalTop: slotPointsVertical(side)[0],
-                        slotPointsVerticalBottom: slotPointsVertical(side)[1],
+                        slotPointsVerticalTop: slotPointsVertical(connector)[0],
+                        slotPointsVerticalBottom: slotPointsVertical(connector)[1],
                     },
                     paths: {
                         left: leftLine,
@@ -562,11 +557,11 @@ export default {
                 return boxPaths;
 
             }
-            // debugger;
+
 
             return  {
-                leftSide: boxSide(box.connectorLeft, 'LEFT'),
-                rightSide: boxSide(box.connectorLeft, 'RIGHT'),
+                leftSide: boxSide(box.connector),
+                rightSide: boxSide(box.connector),
             };
 
         }

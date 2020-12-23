@@ -37,11 +37,12 @@ export interface Box {
 
     name: string;
 
-    connectorRight: boolean;
-    connectorLeft: boolean;
+    connector: Connector;
 
     backSide: boolean;
 }
+
+export type Connector = 'LEFT' | 'RIGHT' | 'BOTH' | 'NONE';
 
 export interface Shelf {
     height: number;
