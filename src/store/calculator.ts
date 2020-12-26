@@ -37,6 +37,8 @@ export interface Box {
 
     name: string;
 
+    connectorLeft: boolean;
+    connectorRight: boolean;
     connector: Connector;
 
     backSide: boolean;
