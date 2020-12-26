@@ -109,12 +109,27 @@
 
                 <div>
                     <h4> Choose if the box should be connected with an other Box to the left or right side</h4>
-                    <input type="checkbox" v-model="box.connectorRight">
-                    <label>Connection to the right side</label>
+                    <label>
+                        <input type="checkbox" v-model="box.connectorRight">
+                        Connection to the right side
+                    </label>
 
-                    <input type="checkbox" v-model="box.connectorLeft">
-                    <label>Connection to the left side</label>
+                    <label>
+                        <input type="checkbox" v-model="box.connectorLeft">
+                        Connection to the left side
+                    </label>
                 </div>
+
+                <div>
+                    <h4>Choose if the Box should have a backside or not (improves stability)</h4>
+                    <label>
+                        <input type="checkbox" v-model="box.backside">
+                        Backside
+                    </label>
+                </div>
+
+                <button type="button" @click="downloadSVG(box)">Download SVGs of Box</button>
+
              </div>
 
 
@@ -126,7 +141,10 @@
         <div>
             <h3>SVG:</h3>
             <div v-html="svgLeft"></div>
-             <div v-html="svgRight"></div>
+            <div v-html="svgRight"></div>
+            <div v-html="svgConnector"></div>
+            <div v-html="svgGround"></div>
+            <div v-html="svgBack"></div>
         </div>
 
 
@@ -135,11 +153,12 @@
 </template>
 
 <script lang="ts">
-import {computed, reactive, ref, unref} from 'vue';
+import {computed, reactive, ref} from 'vue';
 
 import {Box, ProcessingArea, Shelf, BoxDimensions, isValidLongHeightAtStep, isValidLongWidthAtStep, isValidShortHeightAtStep, isValidShortWidthAtStep, isValidShortDepth, isValidLongDepth, Material, Connector} from '../store/calculator';
+import {boxCoordinates} from '../store/boxCoordinates';
 
-import makerjs, { IModel } from 'makerjs';
+import makerjs from 'makerjs';
 
 export default {
     name:"BoxSystem",
@@ -426,150 +445,55 @@ export default {
             return userBoxes.reduce((acum,box) => Object.assign(acum,{[box.name]: (acum[box.name] || 0)+1}),{});
         });
 
-        function boxCoordinates (box: Box, material: Material) {
-            const boxSide = (connector: Connector) => {
-                const boxTenonSize = 10;
-                const boxPositiveTenons = 2;
-                const boxNegativeTenons = boxPositiveTenons + 1;
-                const boxTenonsSum = boxPositiveTenons + boxNegativeTenons;
-                const slotOffSetEdgeX = 20;
-                const slotOffSetEdgeY = 10 + boxTenonSize;
-                const slotHeight = material.thickness;
 
-
-                const bottomLinePoints: [number, number][] = [];
-
-                for (let i = 0; i < boxTenonsSum; i++) {
-                    bottomLinePoints.push([(box.depth / boxTenonsSum) * i, (i % 2) !== 0 ? boxTenonSize : 0]);
-                    bottomLinePoints.push([(box.depth / boxTenonsSum) * (i + 1), (i % 2) !== 0 ? boxTenonSize : 0])
-                }
-
-                const topLinePoints: [number, number][] = [];
-
-                for (let i = 0; i < boxTenonsSum; i++) {
-                    topLinePoints.push([(box.depth / boxTenonsSum) * i, box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
-                    topLinePoints.push([(box.depth / boxTenonsSum) * (i + 1), box.height - ((i % 2) !== 0 ? 0 : boxTenonSize)]);
-                }
-                // debugger;
-
-                const topLine = new makerjs.models.ConnectTheDots(false, topLinePoints);
-                const bottomLine = new makerjs.models.ConnectTheDots(false, bottomLinePoints);
-                const leftLine = new makerjs.paths.Line([0,0], [0, box.height - boxTenonSize]);
-                const rightLine = new makerjs.paths.Line([box.depth,0], [box.depth, (box.height - boxTenonSize)]);
-                // debugger;
-
-                function slotPointsHorizontal(): makerjs.IModel[] {
-                    const height = slotHeight;
-                    const width = box.depth / boxTenonsSum;
-                    const offSetEdgeY = slotOffSetEdgeY;
-                    const offSetEdgeX = slotOffSetEdgeX*2;
-
-                    const bottomLeft: [number, number][] = [
-                        [offSetEdgeX, offSetEdgeY],
-                        [width + offSetEdgeX, offSetEdgeY],
-                        [width + offSetEdgeX, offSetEdgeY + height],
-                        [offSetEdgeX, offSetEdgeY + height],
-                        [offSetEdgeX, offSetEdgeY]];
-                    const bottomRight: [number, number][] = [
-                        [(box.depth) - offSetEdgeX - width, offSetEdgeY],
-                        [(box.depth) - offSetEdgeX, offSetEdgeY],
-                        [(box.depth) - offSetEdgeX, offSetEdgeY + height],
-                        [(box.depth) - offSetEdgeX - width, offSetEdgeY + height],
-                        [(box.depth) - offSetEdgeX - width, offSetEdgeY]];
-                    const topLeft: [number, number][] = [
-                        [offSetEdgeX, box.height - offSetEdgeY - height],
-                        [width + offSetEdgeX, box.height - offSetEdgeY - height],
-                        [width + offSetEdgeX, box.height - offSetEdgeY],
-                        [offSetEdgeX, box.height - offSetEdgeY],
-                        [offSetEdgeX, box.height - offSetEdgeY - height]];
-                    const topRight: [number, number][] = [
-                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY - height],
-                        [(box.depth) - offSetEdgeX, box.height - offSetEdgeY - height],
-                        [(box.depth) - offSetEdgeX, box.height - offSetEdgeY],
-                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY],
-                        [(box.depth) - (offSetEdgeX + width), box.height - offSetEdgeY - height]];
-
-                    const bottomMid: [number, number][] = [
-                        [(box.depth)/2 - width/2, offSetEdgeY],
-                        [(box.depth)/2 + width/2, offSetEdgeY],
-                        [(box.depth)/2 + width/2, offSetEdgeY + height],
-                        [(box.depth)/2 - width/2, offSetEdgeY + height],
-                        [(box.depth)/2 - width/2, offSetEdgeY],
-                    ];
-
-                    const models: IModel[] =[
-                        new makerjs.models.ConnectTheDots(true, bottomLeft),
-                        new makerjs.models.ConnectTheDots(true, bottomRight),
-                        new makerjs.models.ConnectTheDots(true, topLeft),
-                        new makerjs.models.ConnectTheDots(true, topRight)
-                    ];
-
-                    if(connector) models.push(new makerjs.models.ConnectTheDots(true, bottomMid));
-
-                    return models;
-
-                }
-
-                function slotPointsVertical(connector: Connector): makerjs.IModel[] {
-                    const height = box.height / boxTenonsSum;
-                    const width = slotHeight;
-                    const offSetEdgeY = slotOffSetEdgeY + width;
-                    const offSetEdgeX = slotOffSetEdgeX;
-                    const xPos = connector === 'RIGHT' ? width + offSetEdgeX/2 : box.depth - offSetEdgeX /2;
-
-                     const top: [number, number][] = [
-                        [ xPos, box.height - offSetEdgeY - height],
-                        [ xPos - width, box.height - offSetEdgeY - height],
-                        [ xPos - width, box.height - offSetEdgeY],
-                        [ xPos, box.height - offSetEdgeY],
-                        [ xPos, box.height - offSetEdgeY - height]];
-
-                    const bottom: [number, number][] = [
-                        [ xPos, offSetEdgeY],
-                        [ xPos - width, offSetEdgeY],
-                        [ xPos - width, offSetEdgeY + height],
-                        [ xPos, offSetEdgeY + height],
-                        [ xPos, offSetEdgeY]];
-
-                     const models: IModel[] =[
-                        new makerjs.models.ConnectTheDots(true, top),
-                        new makerjs.models.ConnectTheDots(true, bottom),
-                    ];
-
-                    return models;
-                }
-
-                const boxPaths = {
-                    models: {
-                        top: topLine,
-                        bottom: bottomLine,
-                        slotPointsVerticalTop: slotPointsVertical(connector)[0],
-                        slotPointsVerticalBottom: slotPointsVertical(connector)[1],
-                    },
-                    paths: {
-                        left: leftLine,
-                        right: rightLine,
-                    },
-                };
-
-                boxPaths.models = Object.assign( boxPaths.models, slotPointsHorizontal());
-
-                return boxPaths;
-
-            }
-
-
-            return  {
-                leftSide: boxSide(box.connector),
-                rightSide: boxSide(box.connector),
-            };
-
+        const svgOptions: makerjs.exporter.ISVGRenderOptions = {
+            strokeWidth: '0.1'
         }
         // const svg1 = boxCoordinates(possibleBoxes.value[0], material).leftSide;
         // debugger;
-        const svgLeft = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0] as unknown as Box, material).leftSide);
-        const svgRight = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0] as unknown as Box, material).rightSide);
+        const svgLeft = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).leftSide, svgOptions);
+        const svgRight = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).rightSide);
+        const svgConnector = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).connector);
+        const svgGround = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).groundSide);
+        const svgBack = makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).backSide);
         // debugger;
+
+        function downloadSVG(box: Box): void {
+            const svgOptions: makerjs.exporter.ISVGRenderOptions = {
+                // strokeWidth: '0.1',
+                svgAttrs: {width: box.width, height: box.height},
+                // viewBox: true,
+
+                units: 'mm',
+
+            }
+            const downloadSVGs = {
+                left: makerjs.exporter.toSVG(boxCoordinates(box, material).leftSide, svgOptions),
+                right: '',
+                ground: makerjs.exporter.toSVG(boxCoordinates(box, material).groundSide, svgOptions),
+                back: '',
+                connector: '',
+            };
+
+            if(box.connector === 'RIGHT' || box.connector === 'BOTH') downloadSVGs.right = (makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).rightSide, svgOptions));
+            if(box.connector !== 'NONE') downloadSVGs.connector = (makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).connector, svgOptions));
+            if(box.backSide) downloadSVGs.back = (makerjs.exporter.toSVG(boxCoordinates(possibleUserBoxes.value[0], material).backSide, svgOptions));
+
+            Object.keys(downloadSVGs).forEach( key => {
+                const element = downloadSVGs[key];
+                if (element.length <= 0) return;
+
+                const a = document.createElement('a');
+                a.href = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(element);
+                a.download = `${box.name}-${key}.svg`
+                // a.setAttribute('target', '_blank');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            })
+
+        }
+
 
         const testUserBoxes = reactive<Array<any>>([
             reactive(createTestBox(1,1, possibleUserBoxDimesnions.value.heights[0], possibleUserBoxDimesnions.value.widths[1])),
@@ -599,6 +523,10 @@ export default {
             sameUserBoxes,
             svgLeft,
             svgRight,
+            svgConnector,
+            svgGround,
+            svgBack,
+            downloadSVG,
 
             getGridStyle(box: Box): object {
                 // if(box.gridX === 0) box.gridX = Math.round(Math.random() * (10 - 1) + 1);
