@@ -140,8 +140,8 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 			return models;
 		}
 
-		let slotVTop;
-		let slotVBottom;
+		let slotVTop = {};
+		let slotVBottom = {};
 
 		if (!box.backSide) {
 			slotVTop = slotPointsVertical(backTenonWidth, slotHeight, backTenonOffSetEdgeY, slotOffSetEdgeX, box).top;
@@ -166,7 +166,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		return boxSidePaths;
 	}
 
-	function connector(tenonWidth: number, tenonLength: number) {
+	function connector(tenonWidth: number, tenonLength: number): IModel{
 		const connectorPoints: [number, number][] = [
 			[0, 0],
 			[tenonWidth, 0],
@@ -192,7 +192,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		return new makerjs.models.ConnectTheDots(true, connectorPoints);
 	}
 
-	function boxGround(box: Box, material: Material, tenonWidth: number, offSetEdgeX: number, connectorTenonWidth: number, connectorTenonLength: number) {
+	function boxGround(box: Box, material: Material, tenonWidth: number, offSetEdgeX: number, connectorTenonWidth: number, connectorTenonLength: number): IModel{
 		const tenonLength = material.thickness;
         // const sideTenonWidth = slotWidth;
         const connector = box.connector;
@@ -251,11 +251,11 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 			[box.width - tenonLength, box.depth / 2 + connectorTenonWidth / 4],
 		];
 
-		let slotLeftLine;
-		let slotRightLine;
+		let slotLeftLine: IModel = {};
+		let slotRightLine: IModel = {};
 
-		if (connector === 'LEFT' || connector === 'BOTH') slotLeftLine = new makerjs.models.ConnectTheDots(false, connectorSlotPointsLeft);
-		if (connector === 'RIGHT' || connector === 'BOTH') slotRightLine = new makerjs.models.ConnectTheDots(false, connectorSlotPointsRight);
+		if ([Connector.LEFT, Connector.BOTH].includes(connector)) slotLeftLine = new makerjs.models.ConnectTheDots(false, connectorSlotPointsLeft);
+		if ([Connector.RIGHT, Connector.BOTH].includes(connector)) slotRightLine = new makerjs.models.ConnectTheDots(false, connectorSlotPointsRight);
 
 		const backSlotWidth = box.height / boxTenonsSum;
 		const backSlotHeight = slotHeight;
@@ -269,13 +269,13 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 			[box.width / 2 - backSlotWidth / 2, box.depth - offSetEdgeY],
 		];
 
-		let backSlotLine;
+		let backSlotLine: IModel = {};
 
 		if (box.backSide) {
 			backSlotLine = new makerjs.models.ConnectTheDots(true, slotPointsBack);
 		}
 
-		const boxGroundPaths = {
+		const boxGroundPaths: IModel = {
 			models: {
 				left: leftLine,
 				right: rightLine,

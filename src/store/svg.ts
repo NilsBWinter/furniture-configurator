@@ -1,8 +1,16 @@
 import makerjs from 'makerjs';
 
-import { Box, Material } from './calculator';
+import { Box, Material, Connector } from './calculator';
 import { Sides } from './boxCoordinates';
 import { boxCoordinates } from '../store/boxCoordinates';
+
+export interface DownloadSVG {
+	left: string;
+	right: string;
+	ground: string;
+	back: string;
+	connector: string;
+}
 
 export function getSVG(box: Box, material: Material, side: Sides, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
 	return makerjs.exporter.toSVG(boxCoordinates(box, material)[side], svgOptions);
@@ -16,7 +24,7 @@ export function downloadSVG(box: Box, material: Material): void {
 		// svgAttrs: {width: box.width, height: box.height},
 		// units: 'mm',
 	};
-	const downloadSVGs = {
+	const downloadSVGs: DownloadSVG= {
 		left: getSVG(box, material, Sides.leftSide, svgOptions),
 		right: '',
 		ground: getSVG(box, material, Sides.groundSide, svgOptions),
@@ -24,13 +32,13 @@ export function downloadSVG(box: Box, material: Material): void {
 		connector: '',
 	};
 
-	if (box.connector === 'RIGHT' || box.connector === 'BOTH')
+	if (box.connector === Connector.RIGHT || box.connector === Connector.BOTH)
 		downloadSVGs.right = getSVG(box, material, Sides.rightSide, svgOptions);
-	if (box.connector !== 'NONE') downloadSVGs.connector = getSVG(box, material, Sides.connector, svgOptions);
+	if (box.connector !== Connector.NONE) downloadSVGs.connector = getSVG(box, material, Sides.connector, svgOptions);
 	if (box.backSide) downloadSVGs.back = getSVG(box, material, Sides.backSide, svgOptions);
 
-	Object.keys(downloadSVGs).forEach((key) => {
-		const element = downloadSVGs[key];
+	(Object.keys(downloadSVGs) as Array<keyof typeof downloadSVGs>).forEach((key) => {
+		const element: string = downloadSVGs[key];
 		if (element.length <= 0) return;
 
 		console.log(element);
