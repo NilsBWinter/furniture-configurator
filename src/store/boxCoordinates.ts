@@ -143,7 +143,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		let slotVTop = {};
 		let slotVBottom = {};
 
-		if (!box.backSide) {
+		if (box.backSide) {
 			slotVTop = slotPointsVertical(backTenonWidth, slotHeight, backTenonOffSetEdgeY, slotOffSetEdgeX, box).top;
 			slotVBottom = slotPointsVertical(backTenonWidth, slotHeight, backTenonOffSetEdgeY, slotOffSetEdgeX, box).bottom;
 		}
@@ -288,7 +288,6 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 				back: backLine,
 			},
 		};
-
 		return boxGroundPaths;
 	}
 

@@ -81,20 +81,20 @@
 				<div>
 					<h4>Choose if the box should be connected with an other Box to the left or right side</h4>
 					<label>
-						<input type="checkbox" v-model="box.connectorRight" />
-						Connection to the right side
+						<input type="checkbox" v-model="box.connectorLeft" />
+						Connection to the left side
 					</label>
 
 					<label>
-						<input type="checkbox" v-model="box.connectorLeft" />
-						Connection to the left side
+						<input type="checkbox" v-model="box.connectorRight" />
+						Connection to the right side
 					</label>
 				</div>
 
 				<div>
 					<h4>Choose if the Box should have a backside or not (improves stability)</h4>
 					<label>
-						<input type="checkbox" v-model="box.backside" />
+						<input type="checkbox" v-model="box.backSide" />
 						Backside
 					</label>
 				</div>
