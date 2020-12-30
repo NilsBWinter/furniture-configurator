@@ -12,10 +12,24 @@ export interface DownloadSVG {
 	connector: string;
 }
 
-export function getSVG(box: Box, material: Material, side: Sides, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
-	return makerjs.exporter.toSVG(boxCoordinates(box, material)[side], svgOptions);
+/**
+ * Function to create a SVG as string of a Component(Side) of a Box
+ *
+ * @param box Box of the Component(Side)
+ * @param material material that will be used to process
+ * @param component component(Side) that should be given back as an SVG as a String
+ * @param svgOptions Optional render Options of the SVG see maker.js Docu
+ */
+export function getSVG(box: Box, material: Material, component: Sides, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
+	return makerjs.exporter.toSVG(boxCoordinates(box, material)[component], svgOptions);
 }
 
+
+/**
+ * Function to Download all box Components(Side) as SVG
+ * @param box Box of the Components
+ * @param material Material to be processed
+ */
 export function downloadSVG(box: Box, material: Material): void {
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
 		strokeWidth: '0.1',

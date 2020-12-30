@@ -1,8 +1,14 @@
+/**
+ * Interface for the Material to be processed
+ */
 export interface Material {
 	type: string;
 	thickness: number;
 }
 
+/**
+ * Interface for the Maximum possible Proccings Area
+ */
 export interface ProcessingArea {
 	longSide: number;
 	shortSide: number;
@@ -22,6 +28,9 @@ export interface ProcessingArea {
 //     );
 // }
 
+/**
+ * Inteface of a Box of the Shelf
+ */
 export interface Box {
 	height: number;
 	width: number;
@@ -41,6 +50,9 @@ export interface Box {
 	backSide: boolean;
 }
 
+/**
+ * Interface of a Connector to connect to boxes horizontal
+ */
 export enum Connector {
 	LEFT = 'LEFT',
 	RIGHT = 'RIGHT',
@@ -48,12 +60,18 @@ export enum Connector {
 	NONE = 'NONE',
 }
 
+/**
+ * interface of a Shelf
+ */
 export interface Shelf {
 	height: number;
 	width: number;
 	depth: number;
 }
 
+/**
+ * Interface for possible Box Dimensions
+ */
 export interface BoxDimensions {
 	heights: number[];
 	widths: number[];

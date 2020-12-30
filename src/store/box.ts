@@ -12,6 +12,12 @@ import {
 	isValidShortWidthAtStep,
 } from './calculator';
 
+/**
+ * Function to create a new Box fitting to the shelf giving the smallest possible box Dimensions
+ *
+ * @param shelf shelf in wich the box should be belong
+ * @param possibleBoxDimensions possible Dimensions for Boxes of the shelf to be compatible witch each other
+ */
 export function createBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions): Box {
 	const box: Box = {
 		height: possibleBoxDimensions.heights[0],
@@ -47,6 +53,15 @@ export function createBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions): B
 	return box;
 }
 
+/**
+ * Function to create a Testbox to test the functionality & Grid
+ * @param shelf shelf in wich the box should be belong
+ * @param possibleBoxDimensions possible Dimensions for Boxes of the shelf to be compatible witch each other
+ * @param gridX GridX Position
+ * @param gridY GridY Position
+ * @param height height of the Box
+ * @param width width of the Box
+ */
 export function createTestBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions, gridX: number, gridY: number, height: number, width: number) {
     const box = createBox(shelf, possibleBoxDimensions);
 
@@ -58,10 +73,24 @@ export function createTestBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions
 	return box;
 }
 
-export function addBasicBox(userBoxes: Box[], shelf: Shelf, possibleBoxDimensions: BoxDimensions): void {
-	userBoxes.push(createBox(shelf, possibleBoxDimensions));
+/**
+ * Function to push a new Box into the given Box Array
+ *
+ * @param boxes Boxes Array to push the Box in
+ * @param shelf Shelf to wich the Boxes Array belongs
+ * @param possibleBoxDimensions possible Box Dimensions of the Shelf
+ */
+export function addBoxToArray(boxes: Box[], shelf: Shelf, possibleBoxDimensions: BoxDimensions): void {
+	boxes.push(createBox(shelf, possibleBoxDimensions));
 }
 
+/**
+ * Function to calculate the possible Box Dimensions of the base Box from a Shelf
+ *
+ * @param shelf Shelf the Box belongs to
+ * @param processingArea The maximum processable Area that can be processed
+ * @param rangeSteps number of possible Size Variants for the Box Dimensions
+ */
 export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea: ProcessingArea, rangeSteps: number[]): BoxDimensions {
 	const longHeights: number[] = [];
 	const longWidths: number[] = [];
@@ -95,6 +124,13 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 		};
 }
 
+
+/**
+ * Function to calculate all possible Box Dimensions based on a base Box
+ *
+ * @param possibleBasicBoxDimensions Possible Box Dimensions of the base Box
+ * @param basicBox the base Box
+ */
 export function calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions: BoxDimensions, basicBox: Box) {
 	return {
 		heights: possibleBasicBoxDimensions.heights.filter((height) => height >= basicBox.height),
