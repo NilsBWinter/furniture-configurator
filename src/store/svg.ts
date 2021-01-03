@@ -1,7 +1,7 @@
 import makerjs from 'makerjs';
 
 import { Box, Material, Connector } from './calculator';
-import { Sides } from './boxCoordinates';
+import { Components } from './boxCoordinates';
 import { boxCoordinates } from '../store/boxCoordinates';
 
 export interface DownloadSVG {
@@ -20,7 +20,7 @@ export interface DownloadSVG {
  * @param component component(Side) that should be given back as an SVG as a String
  * @param svgOptions Optional render Options of the SVG see maker.js Docu
  */
-export function getSVG(box: Box, material: Material, component: Sides, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
+export function getSVG(box: Box, material: Material, component: Components, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
 	return makerjs.exporter.toSVG(boxCoordinates(box, material)[component], svgOptions);
 }
 
@@ -46,17 +46,17 @@ export function downloadSVG(box: Box, material: Material): void {
 		units: 'mm',
 	}
 	const downloadSVGs: DownloadSVG= {
-		left: getSVG(box, material, Sides.leftSide, svgOptions),
+		left: getSVG(box, material, Components.leftSide, svgOptions),
 		right: '',
-		ground: getSVG(box, material, Sides.groundSide, svgOptionsGround),
+		ground: getSVG(box, material, Components.groundSide, svgOptionsGround),
 		back: '',
 		connector: '',
 	};
 
 	if (box.connector === Connector.RIGHT || box.connector === Connector.BOTH)
-		downloadSVGs.right = getSVG(box, material, Sides.rightSide, svgOptions);
-	if (box.connector !== Connector.NONE) downloadSVGs.connector = getSVG(box, material, Sides.connector, svgOptionsConnector);
-	if (box.backSide) downloadSVGs.back = getSVG(box, material, Sides.backSide, svgOptions);
+		downloadSVGs.right = getSVG(box, material, Components.rightSide, svgOptions);
+	if (box.connector !== Connector.NONE) downloadSVGs.connector = getSVG(box, material, Components.connector, svgOptionsConnector);
+	if (box.backSide) downloadSVGs.back = getSVG(box, material, Components.backSide, svgOptions);
 
 	(Object.keys(downloadSVGs) as Array<keyof typeof downloadSVGs>).forEach((key) => {
 		const element: string = downloadSVGs[key];

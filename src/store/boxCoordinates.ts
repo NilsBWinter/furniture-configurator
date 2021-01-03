@@ -1,17 +1,29 @@
 import makerjs, { IModel } from 'makerjs';
 import { Box, Material, Connector } from './calculator';
 
-export enum Sides {
+/**
+ * Enum for the different Coordninate Components of a Box
+ */
+export enum Components {
     leftSide = "leftSide",
     rightSide = "rightSide",
     connector = "connector",
     groundSide = "groundSide",
     backSide = "backSide",
 }
+/**
+ * Typedefinition for the Coordinate Components of a Box
+ */
 export type Coordinates = {
-    [key in Sides]: IModel;
+    [key in Components]: IModel;
 }
 
+/**
+ * Function to create the Coordinates of a box for rendering & export
+ * 
+ * @param box Box for the Coordinates
+ * @param material Material of the Box
+ */
 export function boxCoordinates(box: Box, material: Material): Coordinates {
 	const boxTenonSize = 10;
 	const boxPositiveTenons = 2;
@@ -30,6 +42,12 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 	const backTenonLength = material.thickness;
 	const backTenonOffSetEdgeY = slotOffSetEdgeY + slotHeight;
 
+	/**
+	 * function to create the Coordinates of a Side Component of a Box
+	 * 
+	 * @param connector Connector Type of the Box
+	 * @param side Side if left or right side should be created
+	 */
 	function boxSide(connector: Connector, side: 'LEFT' | 'RIGHT'): IModel {
 		const bottomLinePoints: [number, number][] = [];
 
@@ -44,19 +62,22 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 			topLinePoints.push([(box.depth / boxTenonsSum) * i, box.height - (i % 2 !== 0 ? 0 : boxTenonSize)]);
 			topLinePoints.push([(box.depth / boxTenonsSum) * (i + 1), box.height - (i % 2 !== 0 ? 0 : boxTenonSize)]);
 		}
-		// debugger;
 
 		const topLine = new makerjs.models.ConnectTheDots(false, topLinePoints);
 		const bottomLine = new makerjs.models.ConnectTheDots(false, bottomLinePoints);
 		const leftLine = new makerjs.paths.Line([0, 0], [0, box.height - boxTenonSize]);
 		const rightLine = new makerjs.paths.Line([box.depth, 0], [box.depth, box.height - boxTenonSize]);
-		// debugger;
 
+		/**
+		 * Function to create the Points of the Horizontal Slots of the side Components for the bottom & top Component
+		 * 
+		 * @param side left or right side to create horizontal slots on
+		 * @param height height of the slots
+		 * @param width width of the slots
+		 * @param offSetEdgeY offset to the outer Edge on the Y Axis
+		 * @param offSetEdgeX offset to the outer Edge on the X Axis
+		 */
 		function slotPointsHorizontal(side: 'LEFT' | 'RIGHT', height: number, width: number, offSetEdgeY: number, offSetEdgeX: number): IModel[] {
-			// const height = slotHeight;
-			// const width = slotWidth;
-			// const offSetEdgeY = slotOffSetEdgeY;
-			// const offSetEdgeX = slotOffSetEdgeX * 2;
 
 			const bottomLeft: [number, number][] = [
 				[offSetEdgeX, offSetEdgeY],
@@ -107,14 +128,18 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 			return models;
 		}
 
+		/**
+		 * Function to create the Points of the Vertical Slots of the side Components for the back Component
+		 * 
+		 * @param side left or right side to create horizontal slots on
+		 * @param height height of the slots
+		 * @param width width of the slots
+		 * @param offSetEdgeY offset to the outer Edge on the Y Axis
+		 * @param offSetEdgeX offset to the outer Edge on the X Axis 
+		 * @param box box to create Coordinates for
+		 */
 		function slotPointsVertical(backSlotHeight: number, backSlotWidth: number, offSetEdgeY: number, offSetEdgeX: number, box: Box ): { top: IModel; bottom: IModel } {
-			// const backSlotHeight = backTenonWidth;
-			// const backSlotWidth = slotHeight;
-			// const offSetEdgeY = backTenonOffSetEdgeY;
-			// const offSetEdgeX = slotOffSetEdgeX;
             const xPos = box.depth - offSetEdgeX / 2;
-
-			// const xPos = side === 'RIGHT' ? width + offSetEdgeX/2 : box.depth - offSetEdgeX /2;
 
 			const top: [number, number][] = [
 				[xPos, box.height - offSetEdgeY - backSlotHeight],
@@ -166,6 +191,12 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		return boxSidePaths;
 	}
 
+	/**
+	 * Function to create the Coordinates of the Connector Component of a Box based on the size of the dimsnions of a tenon
+	 * 
+	 * @param tenonWidth width of a tenon
+	 * @param tenonLength height of a tenon
+	 */
 	function connector(tenonWidth: number, tenonLength: number): IModel{
 		const connectorPoints: [number, number][] = [
 			[0, 0],
@@ -192,6 +223,16 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		return new makerjs.models.ConnectTheDots(true, connectorPoints);
 	}
 
+	/**
+	 * Function to create the Coordinates of a ground Component of the Box, includes top & bottom Component
+	 * 
+	 * @param box Box of wich the Component should be created for
+	 * @param material Material of the Box
+	 * @param tenonWidth width of the Tenons of the Box
+	 * @param offSetEdgeX offSet on the X-Axis of the Tenons to the Outer Edge
+	 * @param connectorTenonWidth width of the Connector Tenon (Connector Component to Connect 2 Boxes vertically)
+	 * @param connectorTenonLength length of the Connector Tenon (Connector Component to Connect 2 Boxes vertically)
+	 */
 	function boxGround(box: Box, material: Material, tenonWidth: number, offSetEdgeX: number, connectorTenonWidth: number, connectorTenonLength: number): IModel{
 		const tenonLength = material.thickness;
         // const sideTenonWidth = slotWidth;
@@ -291,9 +332,15 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 		return boxGroundPaths;
 	}
 
+	/**
+	 * Function to create the Coordinates of the Backside of the Box
+	 * 
+	 * @param tenonWidth width of the Tenons of the Backside to connect with the other sides
+	 * @param tenonLength length of the Tenons of the Backside to connect with the other sides
+	 * @param backTenonOffSetEdgeY offset to the outer Edge of the Component from the Tenons
+	 * @param box Box the Backside Component
+	 */
 	function backSide(tenonWidth: number, tenonLength: number, backTenonOffSetEdgeY: number, box: Box) {
-		// const tenonWidth = backTenonWidth;
-		// const tenonLength = backTenonLength;
 
 		const leftSidePoints: [number, number][] = [
 			[tenonLength, tenonLength],
