@@ -30,24 +30,46 @@ export interface ProcessingArea {
 
 /**
  * Inteface of a Box of the Shelf
+ *
+ * @param x gridposition x-Axis
+ * @param y gridposition y-Axis
+ * @param w dimensio width in Grid
+ * @param h dimensio height in Grid
+ * @param minW min width Dimension for Grid
+ * @param maxW max width Dimension for Grid
+ * @param minH min height Dimension for Grid
+ * @param maxH max height Dimension for Grid
  */
 export interface Box {
 	height: number;
 	width: number;
 	depth: number;
 
-	gridX: number;
-	gridY: number;
-	gridSizeX: number;
-	gridSizeY: number;
+	/**
+	 * Grid
+	 */
+	id: number;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	minW?: number;
+	maxW?: number;
+	minH?: number;
+	maxH?: number;
+	noMove?: boolean;
 
-	name: string;
+	content: string;
 
 	connectorLeft: boolean;
 	connectorRight: boolean;
 	connector: Connector;
 
 	backSide: boolean;
+
+	possibleBoxDimensions: BoxDimensions;
+
+	validDimensions: boolean;
 }
 
 /**

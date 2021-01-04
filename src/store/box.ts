@@ -18,21 +18,29 @@ import {
  * @param shelf shelf in wich the box should be belong
  * @param possibleBoxDimensions possible Dimensions for Boxes of the shelf to be compatible witch each other
  */
-export function createBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions): Box {
+export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 	const box: Box = {
-		height: possibleBoxDimensions.heights[0],
-		width: possibleBoxDimensions.widths[0],
+		height: boxDimensions.heights[0],
+		width: boxDimensions.widths[0],
 		depth: shelf.depth,
 
-		get gridSizeX() {
-			return possibleBoxDimensions.widths.indexOf(box.width) + 1;
-		},
-		get gridSizeY() {
-			return possibleBoxDimensions.heights.indexOf(box.height) + 1;
-		},
+		possibleBoxDimensions: boxDimensions,
 
-		gridX: 0,
-		gridY: 0,
+		id: getRandomInt(1, 9999),
+		x: 0,
+		y: 0,
+
+		get w() {
+			return box.possibleBoxDimensions.widths.indexOf(box.width) + 1;
+		},
+		get h() {
+			return box.possibleBoxDimensions.heights.indexOf(box.height) + 1;
+		},
+		// minW: 1,
+		// minH: 1,
+		// maxW: possibleBoxDimensions.widths.length-1,
+		// maxH : possibleBoxDimensions.heights.length-1,
+
 
 		connectorLeft: false,
 		connectorRight: false,
@@ -46,8 +54,13 @@ export function createBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions): B
 
 		backSide: false,
 
-		get name() {
-			return `Box ${box.gridSizeY}.${box.gridSizeX}`;
+
+		get content() {
+			return `Box ${box.h}.${box.w}`;
+		},
+
+		get validDimensions() {
+			return boxDimensionValid(box, box.possibleBoxDimensions);
 		},
 	};
 	return box;
@@ -65,10 +78,11 @@ export function createBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions): B
 export function createTestBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions, gridX: number, gridY: number, height: number, width: number) {
     const box = createBox(shelf, possibleBoxDimensions);
 
-    box.gridX = gridX;
-    box.gridY = gridY;
+    box.x = gridX;
+    box.y = gridY;
     box.height = height;
-    box.width = width;
+	box.width = width;
+	// box.noMove = true;
 
 	return box;
 }
@@ -182,3 +196,17 @@ export function calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions: B
 
 //     return boxes;
 // }
+
+export function updatBoxDimensions(box: Box, newBoxDimesnions: BoxDimensions): void {
+	box.possibleBoxDimensions = newBoxDimesnions;
+}
+
+export function boxDimensionValid(box: Box, boxDimensions: BoxDimensions): boolean {
+	return boxDimensions.heights.includes(box.height) && boxDimensions.widths.includes(box.width);
+}
+
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+}

@@ -66,7 +66,7 @@ export function downloadSVG(box: Box, material: Material): void {
 
 		const a = document.createElement('a');
 		a.href = 'data:image/svg; base64, ' + btoa(unescape(encodeURIComponent(element)));
-		a.download = `${box.name}-${key}.svg`;
+		a.download = `${box.content}-${key}.svg`;
 		// a.setAttribute('target', '_blank');
 		document.body.appendChild(a);
 		a.click();

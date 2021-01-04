@@ -5,14 +5,17 @@
 		<div>
 			<h2>Enter the dimensions of your shelf</h2>
 
-			<label>Shelf Height in mm:</label>
-			<input type="number" v-model.number="shelf.height" />
+			<o-field label="Shelf Height in mm:">
+                <o-input type="number" v-model.number="shelf.height" rounded />
+            </o-field>
 
-			<label>Shelf Width in mm:</label>
-			<input type="number" v-model.number="shelf.width" />
+			<o-field label="Shelf Width in mm:">
+                <o-input type="number" v-model.number="shelf.width" rounded />
+            </o-field>
 
-			<label>Shelf Depth in mm:</label>
-			<input type="number" v-model.number="shelf.depth" />
+			<o-field label="Shelf Depth in mm:">
+                <o-input type="number" v-model.number="shelf.depth" rounded />
+            </o-field>
 		</div>
 
 		<div>
@@ -23,118 +26,116 @@
 			</p>
 
 			<div>
-				<select v-model="basicBox.height">
-					<option v-for="height in possibleBasicBoxDimensions.heights" :key="height" :value="height">
-						{{ height }}
-					</option>
-				</select>
-				<label>basicBoxHeight : {{ basicBox.height }}</label>
+				<o-field label="basicBoxHeight:">
+					<o-select v-model="basicBox.height" rounded>
+						<option v-for="height in possibleBasicBoxDimensions.heights" :key="height" :value="height">
+							{{ height }}
+						</option>
+					</o-select>
+				</o-field>
 			</div>
 
 			<div>
-				<select v-model="basicBox.width">
-					<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
-						{{ width }}
-					</option>
-				</select>
-				<label>basicBoxWidth: {{ basicBox.width }}</label>
+				<o-field label="basicBoxHeight:">
+					<o-select v-model="basicBox.width" rounded>
+						<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
+							{{ width }}
+						</option>
+					</o-select>
+				</o-field>
 			</div>
 
 			<div>
-				<label>basicBoxDepth: {{ basicBox.depth }}</label>
+				<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
 			</div>
 		</div>
 
 		<div>
 			<h2>Box Grid</h2>
-			<div class="box-system-grid">
-				<div v-for="(box, index) in userBoxes" :key="index" :value="box" :style="getGridStyle(box)" class="box-system-grid__box-container">
-					<div class="box-system-grid__box-container__box">{{ box.name }}</div>
-				</div>
-			</div>
+			<p>{{info}}</p>
+			<div v-if="invalidBoxes.length > 0">You have {{invalidBoxes.length}} invalid Boxes</div>
+			<div class="grid-stack"></div>
 		</div>
 
 		<div>
 			<h2>Configure your Boxes</h2>
 
 			<div v-for="(box, index) in userBoxes" :key="index" :value="box" class="box-container">
-				<h3>{{ box.name }} Height:{{ box.height }} Width:{{ box.width }}</h3>
+				<h3>{{ box.content }} Height:{{ box.height }} Width:{{ box.width }}</h3>
 
 				<div>
 					<h4>Configure the height and width of the box</h4>
 
-					<select v-model="box.height">
-						<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
-							{{ height }}
-						</option>
-					</select>
-					<label>Box height: {{ box.height }}</label>
+					<o-field label="Box height:">
+						<o-select v-model="box.height" rounded>
+							<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
+								{{ height }}
+							</option>
+						</o-select>
+					</o-field>
 
-					<select v-model="box.width">
-						<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
-							{{ width }}
-						</option>
-					</select>
-					<label>Box width: {{ box.width }}</label>
+					<o-field label="Box width:">
+						<o-select v-model="box.width" rounded>
+							<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
+								{{ width }}
+							</option>
+						</o-select>
+					</o-field>
 				</div>
 
 				<div>
 					<h4>Choose if the box should be connected with an other Box to the left or right side</h4>
-					<label>
-						<input type="checkbox" v-model="box.connectorLeft" />
-						Connection to the left side
-					</label>
 
-					<label>
-						<input type="checkbox" v-model="box.connectorRight" />
+					<o-checkbox v-model="box.connectorLeft">
+						Connection to the left side
+					</o-checkbox>
+
+					<o-checkbox v-model="box.connectorRight">
 						Connection to the right side
-					</label>
+					</o-checkbox>
 				</div>
 
 				<div>
 					<h4>Choose if the Box should have a backside or not (improves stability)</h4>
-					<label>
-						<input type="checkbox" v-model="box.backSide" />
+
+					<o-checkbox v-model="box.backSide">
 						Backside
-					</label>
+					</o-checkbox>
 				</div>
 
-				<button type="button" @click="downloadSVG(box, materialRef)">Download SVGs of Box</button>
+				<o-button @click="downloadSVG(box, materialRef)">Download SVGs of Box</o-button>
 
 				<div v-html="getSVG(box, materialRef, 'groundSide')"></div>
 			</div>
 
-			<button @click="addBasicBox">Add Box</button>
+			<o-button @click="addBasicBox">Add Box</o-button>
 		</div>
-
-		<!-- <div>
-			<h3>SVG:</h3>
-			<div v-html="svgLeft"></div>
-			<div v-html="svgRight"></div>
-			<div v-html="svgConnector"></div>
-			<div v-html="svgGround"></div>
-			<div v-html="svgBack"></div>
-		</div> -->
 	</div>
 </template>
 
 <script lang="ts">
-import { computed, reactive, ref, Ref} from 'vue';
-import makerjs from 'makerjs';
+import { computed, onMounted, reactive, ref, Ref, watch} from 'vue';
 
 import { Box, ProcessingArea, Shelf, BoxDimensions, Material } from '../store/calculator';
 import { boxCoordinates } from '../store/boxCoordinates';
 import {
 	createTestBox,
 	createBox,
-	addBasicBox,
+	// addBasicBox,
 	calculatePossibleBasicBoxDimensions,
 	// calculatePossibleBoxes,
 	calculatePossibleUserBoxDimensions,
+  updatBoxDimensions,
 } from '../store/box';
+import {  createGridColumnsCSS } from '../store/boxGrid';
 // import { calculateBoxesGridArea, getMaxGridDimensions } from '../store/boxGrid';
 import { downloadSVG, getSVG } from '../store/svg';
 import { getGridStyle } from '../store/style'
+
+
+import GridStack from 'gridstack/dist/gridstack-h5.js'
+import "gridstack/dist/gridstack.css";
+import { GridStackOptions } from 'gridstack';
 
 function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensions>): Box[] {
 	return reactive<Array<Box>>([
@@ -142,18 +143,8 @@ function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensi
 				createTestBox(
 					shelf,
 					possibleUserBoxDimensions.value,
-					1,
-					1,
-					possibleUserBoxDimensions.value.heights[0],
-					possibleUserBoxDimensions.value.widths[1],
-				),
-			),
-			reactive(
-				createTestBox(
-					shelf,
-					possibleUserBoxDimensions.value,
-					3,
-					1,
+					0,
+					possibleUserBoxDimensions.value.heights.length,
 					possibleUserBoxDimensions.value.heights[0],
 					possibleUserBoxDimensions.value.widths[1],
 				),
@@ -163,7 +154,17 @@ function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensi
 					shelf,
 					possibleUserBoxDimensions.value,
 					2,
-					2,
+					possibleUserBoxDimensions.value.heights.length,
+					possibleUserBoxDimensions.value.heights[0],
+					possibleUserBoxDimensions.value.widths[1],
+				),
+			),
+			reactive(
+				createTestBox(
+					shelf,
+					possibleUserBoxDimensions.value,
+					1,
+					possibleUserBoxDimensions.value.heights.length,
 					possibleUserBoxDimensions.value.heights[1],
 					possibleUserBoxDimensions.value.widths[1],
 				),
@@ -172,8 +173,8 @@ function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensi
 				createTestBox(
 					shelf,
 					possibleUserBoxDimensions.value,
-					5,
-					1,
+					4,
+					possibleUserBoxDimensions.value.heights.length,
 					possibleUserBoxDimensions.value.heights[2],
 					possibleUserBoxDimensions.value.widths[0],
 				),
@@ -182,8 +183,8 @@ function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensi
 				createTestBox(
 					shelf,
 					possibleUserBoxDimensions.value,
-					2,
-					4,
+					possibleUserBoxDimensions.value.widths.length,
+					possibleUserBoxDimensions.value.heights.length,
 					possibleUserBoxDimensions.value.heights[0],
 					possibleUserBoxDimensions.value.widths[3],
 				),
@@ -196,6 +197,25 @@ const testShelf = ref<Shelf>({
 	width: 1800,
 	depth: 400,
 });
+
+function calculateGrid(shelf: Shelf, basicBox: Box, userBoxes: Box[]) {
+	const gridOptions: GridStackOptions = {
+		// column: shelf.width / basicBox.width,
+		minRow: 1,
+		maxRow: shelf.height / basicBox.height,
+		disableOneColumnMode: true,
+		float: true,
+		cellHeight: `50px`,
+	}
+	const grid = GridStack.init(gridOptions);
+	grid.removeAll();
+
+	createGridColumnsCSS(shelf.width / basicBox.width);
+	userBoxes.forEach((box) => {
+		grid.addWidget(box);
+	});
+
+}
 
 export default {
 	name: 'BoxSystem',
@@ -217,7 +237,9 @@ export default {
 		const processingArea: ProcessingArea = ref(props.processingArea).value;
 		const materialRef = ref<Material>(props.material);
 
-		let shelf: Shelf = reactive({
+		let mounted = false;
+
+		let shelf = reactive<Shelf>({
 			height: 0,
 			width: 0,
 			depth: 0,
@@ -225,17 +247,7 @@ export default {
 
 		shelf = testShelf.value;
 
-		let userBoxes: Box[] = [];
-
-		// const gridWidth = computed((): number => getMaxGridDimensions(userBoxes).maxX);
-		// const gridHeight = computed((): number => getMaxGridDimensions(userBoxes).maxY);
-
-		// const userBoxesGridSpace = computed((): number => calculateBoxesGridArea(userBoxes));
-
-		// const userBoxesEmptySpaces = computed((): number => {
-		// 	const gridArea = gridHeight.value * gridWidth.value;
-		// 	return gridArea - userBoxesGridSpace.value;
-		// });
+		// let userBoxes: Box[] = [];
 
 		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, processingArea, rangeSteps));
 
@@ -245,15 +257,41 @@ export default {
 			(): BoxDimensions => calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions.value, basicBox),
 		);
 
-		// const possibleBoxes = computed((): Box[] => calculatePossibleBoxes(possibleBasicBoxDimensions.value, basicBox));
+		const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));
 
-		// const possibleUserBoxes = computed(() => possibleBoxes.value.filter((box) => box.height >= basicBox.height && box.width >= basicBox.width));
+		const info = ref('');
 
-		// const sameUserBoxes = computed(() => {
-		// 	return userBoxes.reduce((acum, box) => ({...acum, [box.name]: (acum[box.name] || 0) + 1 }), {});
-		// });
+		const invalidBoxes = ref<Box[]>([]);
 
-		userBoxes = createTestBoxes(shelf, possibleUserBoxDimensions);
+		onMounted(() => {
+			mounted = true;
+
+			calculateGrid(shelf, basicBox, userBoxes);
+
+			GridStack.init().on("dragstop", (event, element) => {
+				const node = element.gridstackNode;
+				// `this` will only access your Vue instance if you used an arrow function, otherwise `this` binds to window scope. see https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/
+				info.value = `you just dragged node #${node.id} to ${node.x},${node.y} – good job!`;
+			});
+		})
+
+		watch([shelf, basicBox, userBoxes], () => {
+			if(mounted) {
+				calculateGrid(shelf, basicBox, userBoxes);
+			}
+		})
+
+		watch(possibleUserBoxDimensions, (newBoxDimesnions) => {
+			userBoxes.forEach((box) => updatBoxDimensions(box, newBoxDimesnions));
+		})
+
+		watch(userBoxes, () => {
+			const boxes: Box[] = [];
+			userBoxes.forEach((box: Box) => {
+				if(!box.validDimensions) boxes.push(box);
+			})
+			invalidBoxes.value = boxes;
+		})
 
 		return {
 			shelf,
@@ -276,55 +314,40 @@ export default {
 			getGridStyle,
 
 			// Functions
-			addBasicBox,
+			// addBasicBox,
 			createBox,
 			getSVG,
+			invalidBoxes,
+			info
 		};
+
 	},
+
 };
 </script>
 
 <style lang="scss">
-.box-system-grid {
-	display: grid;
+:root {
+	--gridstack-columns: 12;
+}
 
-	grid-auto-rows: 300px;
-	grid-auto-columns: 300px;
+.grid-stack {
+	border: 1px solid blue;
 
-	border: solid 1px;
+	&-item {
+		border: 1px solid;
 
-	width: max-content;
+		// min-width: (100% / var(--gristack-columns));
 
-	&__box-container {
-		display: grid;
-		grid-template-columns: 1fr 10fr 1fr;
-		grid-template-rows: 1fr 6fr;
-
-		border: solid 1px;
-
-		&__add--top {
-			grid-column: 2/2;
-			grid-row: 1;
-		}
-
-		&__add--left {
-			grid-column: 1/1;
-			grid-row: 2;
-		}
-
-		&__add--right {
-			grid-column: 3/3;
-			grid-row: 2;
-		}
-
-		&__box {
-			grid-column: 2/2;
-			grid-row: 2;
-
-			// border: solid 1px;
-		}
+		// @for $i from 1 through var(--gristack-columns) {
+		// 	&[gs-w='#{$i}'] { width: (100% / var(--gristack-columns)) * $i; }
+		// 	&[gs-x='#{$i}'] { left: (100% / var(--gristack-columns)) * $i; }
+		// 	&[gs-min-w='#{$i}'] { min-width: (100% / var(--gristack-columns)) * $i; }
+		// 	&[gs-max-w='#{$i}'] { max-width: (100% / var(--gristack-columns)) * $i; }
+		// }
 	}
 }
+
 
 .box-container {
 	border: solid 1px;

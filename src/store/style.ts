@@ -7,10 +7,10 @@ import { Box } from './calculator';
  */
 export function getGridStyle(box: Box): object {
     return {
-        'grid-column-start': box.gridX,
-        'grid-row-start': -box.gridY,
+        'grid-column-start': box.x,
+        'grid-row-start': -box.y,
 
-        'grid-column-end': box.gridX + box.gridSizeX,
-        'grid-row-end': -box.gridY - box.gridSizeY,
+        'grid-column-end': box.x + box.w,
+        'grid-row-end': -box.y - box.h,
     };
 }

@@ -5,43 +5,49 @@
         <div>
             <h2>Enter the maximum possible processing area of your device</h2>
 
-            <label>Longer Side in mm:</label>
-            <input type="number" v-model.number="processingArea.height" />
+            <o-field label="Longer Side in mm:">
+                <o-input type="number" v-model.number="processingArea.longSide" rounded />
+            </o-field>
 
-            <label>Shorter Side in mm:</label>
-            <input type="number" v-model.number="processingArea.width" />
+            <o-field label="Shorter Side in mm:">
+                <o-input type="number" v-model.number="processingArea.shortSide" rounded />
+            </o-field>
         </div>
 
         <div>
             <h2>Enter the your Material</h2>
 
-            <label>Type:</label>
-            <input type="text" v-model="material.type" />
+            <o-field label="Type:">
+                <o-input type="text" v-model="material.type" rounded />
+            </o-field>
 
-            <label>Thickness:</label>
-            <input type="number" v-model.number="material.thickness" />
+            <o-field label="Thickness in mm:">
+                <o-input type="number" v-model.number="material.thickness" rounded />
+            </o-field>
         </div>
 
         <div>
             <h2>Enter the tolerance of your device and material</h2>
 
-            <label>Tolerance in mm:</label>
-            <input type="number" v-model.number="tolerance" />
+            <o-field label="Tolerance in mm:">
+                <o-input type="number" v-model.number="tolerance" rounded />
+            </o-field>
         </div>
 
-        <div>
+        <!-- <div> Future Code
             <h2>Select the type of your shelf</h2>
 
             <div>
+
                 <input type="radio" id="box-system" name="box-system" value="box-system" checked>
                 <label for="box-system">Box-System</label>
             </div>
-        </div>
+        </div> -->
 
 
         <div>
             <h2>your Settings</h2>
-            <p> Processing Area Height: {{ processingArea.height}}mm * {{ processingArea.width}}mm</p>
+            <p> Processing Area: {{ processingArea.longSide}}mm * {{ processingArea.shortSide}}mm</p>
             <p> Material: {{material.type}} , {{material.thickness}}</p>
             <p> Tolerance: {{tolerance}}mm</p>
         </div>
