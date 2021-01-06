@@ -191,7 +191,7 @@ export function updateBoxGridPosition(boxes: Box[], changedBox: Box) {
 }
 
 export function updateBoxSize(boxes: Box[], changedBox: Box) {
-	boxes.some((box) => {
+	boxes.every((box) => {
 			if (box.id === changedBox.id) {
 				if (changedBox.w - 1 > box.possibleBoxDimensions.widths.length - 1) {
 					console.error('Box does not for the given Box Dimensions(width)');
@@ -199,7 +199,7 @@ export function updateBoxSize(boxes: Box[], changedBox: Box) {
 				}
 				if (changedBox.h - 1 > box.possibleBoxDimensions.heights.length) {
 					console.error('Box does not for the given Box Dimensions(height)');
-					return true;
+					return false;
 				}
 				box.width = box.possibleBoxDimensions.widths[changedBox.w - 1];
 				box.height = box.possibleBoxDimensions.heights[changedBox.h - 1];
