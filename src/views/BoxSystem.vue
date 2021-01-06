@@ -110,6 +110,7 @@
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
+			<o-button @click="downloadBoxesSVG(userBoxes, material)">Download SVGs of all Boxes</o-button>
 		</div>
 	</div>
 </template>
@@ -132,7 +133,7 @@ import {
 
 import {  calculateGrid } from '../store/boxGrid';
 // import { calculateBoxesGridArea, getMaxGridDimensions } from '../store/boxGrid';
-import { downloadSVG, getSVG } from '../store/svg';
+import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../store/svg';
 import { getGridStyle } from '../store/style'
 
 
@@ -293,7 +294,8 @@ export default {
 			possibleBasicBoxDimensions,
 			userBoxes,
 			possibleUserBoxDimensions,
-			downloadSVG,
+			downloadBoxSVG,
+			downloadBoxesSVG,
 			boxCoordinates,
 			materialRef,
 			invalidBoxes,

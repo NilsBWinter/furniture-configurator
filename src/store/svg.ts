@@ -30,7 +30,7 @@ export function getSVG(box: Box, material: Material, component: Components, svgO
  * @param box Box of the Components
  * @param material Material to be processed
  */
-export function downloadSVG(box: Box, material: Material): void {
+export function downloadBoxSVG(box: Box, material: Material): void {
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
 		strokeWidth: '0.1',
 		units: 'mm',
@@ -72,4 +72,14 @@ export function downloadSVG(box: Box, material: Material): void {
 		a.click();
 		document.body.removeChild(a);
 	});
+}
+
+/**
+ * Function to download all SVGs of an Boxes Array
+ *
+ * @param boxes
+ * @param material
+ */
+export function downloadBoxesSVG(boxes: Box[], material: Material) {
+	boxes.forEach(box => downloadBoxSVG(box, material));
 }
