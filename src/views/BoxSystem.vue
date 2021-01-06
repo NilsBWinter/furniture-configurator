@@ -2,7 +2,7 @@
 	<div>
 		<h1>Box System</h1>
 
-		<div>
+		<div class="box-container">
 			<h2>Enter the dimensions of your shelf</h2>
 
 			<o-field label="Shelf Height in mm:">
@@ -18,36 +18,30 @@
             </o-field>
 		</div>
 
-		<div>
+		<div class="box-container">
 			<h2>Define the dimensions of your basict Box(this will define your smallest item size in the shelf Grid)</h2>
 			<p>
 				You can define bigger boxes based on your basic box (the dimesnions of your basic box have to be a divider by the maximum of the
 				possible processable area of you machine)
 			</p>
 
-			<div>
-				<o-field label="basicBoxHeight:">
-					<o-select v-model="basicBox.height" rounded>
-						<option v-for="height in possibleBasicBoxDimensions.heights" :key="height" :value="height">
-							{{ height }}
-						</option>
-					</o-select>
-				</o-field>
-			</div>
+			<o-field label="basicBoxHeight:">
+				<o-select v-model="basicBox.height" rounded>
+					<option v-for="height in possibleBasicBoxDimensions.heights" :key="height" :value="height">
+						{{ height }}
+					</option>
+				</o-select>
+			</o-field>
 
-			<div>
-				<o-field label="basicBoxHeight:">
-					<o-select v-model="basicBox.width" rounded>
-						<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
-							{{ width }}
-						</option>
-					</o-select>
-				</o-field>
-			</div>
+			<o-field label="basicBoxHeight:">
+				<o-select v-model="basicBox.width" rounded>
+					<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
+						{{ width }}
+					</option>
+				</o-select>
+			</o-field>
 
-			<div>
-				<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
-			</div>
+			<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
 		</div>
 
 		<div>
@@ -64,7 +58,7 @@
 			<div v-for="(box, index) in userBoxes" :key="index" :value="box" class="box-container">
 				<h3>{{ box.content }} Height:{{ box.height }} Width:{{ box.width }}</h3>
 
-				<div>
+				<div class="box-container-field">
 					<h4>Configure the height and width of the box</h4>
 
 					<o-field label="Box height:">
@@ -346,11 +340,5 @@ export default {
 			background-color: white;
 		}
 	}
-}
-
-
-.box-container {
-	border: solid 1px;
-	margin-bottom: 16px;
 }
 </style>

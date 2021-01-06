@@ -2,7 +2,7 @@
     <div>
         <h1>Basic Settings</h1>
 
-        <div>
+        <div class="box-container">
             <h2>Enter the maximum possible processing area of your device</h2>
 
             <o-field label="Longer Side in mm:">
@@ -14,7 +14,7 @@
             </o-field>
         </div>
 
-        <div>
+        <div class="box-container">
             <h2>Enter the your Material</h2>
 
             <o-field label="Type:">
@@ -26,7 +26,7 @@
             </o-field>
         </div>
 
-        <div>
+        <div class="box-container">
             <h2>Enter the tolerance of your device and material</h2>
 
             <o-field label="Tolerance in mm:">

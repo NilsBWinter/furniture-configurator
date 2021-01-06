@@ -28,11 +28,35 @@
   }
 }
 
+.box-container {
+	display: grid;
+	justify-content: center;
+
+	border: solid 1px;
+	margin-bottom: 16px;
+}
+
+.o-field {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+
+  .o-field-label {
+	align-self: center;
+
+	// padding-right: 8px;
+	width: 200px;
+  }
+
+  .o-control-input {
+	display: contents;
+  }
+}
+
 .icon {
 	height: 24px;
 }
-
-
 
 // Fixes oruga setting disabled attribute to false instead of ommiting it
 [disabled='false'] {
