@@ -52,6 +52,7 @@
 
 		<div>
 			<h2>Box Grid</h2>
+			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
 			<p>{{info}}</p>
 			<div v-if="invalidBoxes.length > 0">You have {{invalidBoxes.length}} invalid Boxes</div>
 			<div class="grid-stack"></div>
@@ -108,7 +109,7 @@
 				<div v-html="getSVG(box, materialRef, 'groundSide')"></div>
 			</div>
 
-			<o-button @click="addBasicBox">Add Box</o-button>
+			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
 		</div>
 	</div>
 </template>
@@ -121,13 +122,15 @@ import { boxCoordinates } from '../store/boxCoordinates';
 import {
 	createTestBox,
 	createBox,
-	// addBasicBox,
+	createBoxToArray,
 	calculatePossibleBasicBoxDimensions,
-	// calculatePossibleBoxes,
 	calculatePossibleUserBoxDimensions,
   updatBoxDimensions,
+  initGridDragged,
+  initGridResize,
 } from '../store/box';
-import {  createGridColumnsCSS } from '../store/boxGrid';
+
+import {  calculateGrid } from '../store/boxGrid';
 // import { calculateBoxesGridArea, getMaxGridDimensions } from '../store/boxGrid';
 import { downloadSVG, getSVG } from '../store/svg';
 import { getGridStyle } from '../store/style'
@@ -136,6 +139,7 @@ import { getGridStyle } from '../store/style'
 import GridStack from 'gridstack/dist/gridstack-h5.js'
 import "gridstack/dist/gridstack.css";
 import { GridStackOptions } from 'gridstack';
+
 
 function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensions>): Box[] {
 	return reactive<Array<Box>>([
@@ -198,25 +202,6 @@ const testShelf = ref<Shelf>({
 	depth: 400,
 });
 
-function calculateGrid(shelf: Shelf, basicBox: Box, userBoxes: Box[]) {
-	const gridOptions: GridStackOptions = {
-		// column: shelf.width / basicBox.width,
-		minRow: 1,
-		maxRow: shelf.height / basicBox.height,
-		disableOneColumnMode: true,
-		float: true,
-		cellHeight: `50px`,
-	}
-	const grid = GridStack.init(gridOptions);
-	grid.removeAll();
-
-	createGridColumnsCSS(shelf.width / basicBox.width);
-	userBoxes.forEach((box) => {
-		grid.addWidget(box);
-	});
-
-}
-
 export default {
 	name: 'BoxSystem',
 
@@ -263,21 +248,30 @@ export default {
 
 		const invalidBoxes = ref<Box[]>([]);
 
+		const gridOptions: GridStackOptions = {
+			// column: shelf.width / basicBox.width,
+			minRow: 1,
+			maxRow: shelf.height / basicBox.height,
+			disableOneColumnMode: true,
+			float: true,
+			cellHeight: `50px`,
+		}
+		let grid: GridStack;
+
 		onMounted(() => {
 			mounted = true;
 
-			calculateGrid(shelf, basicBox, userBoxes);
+			grid = GridStack.init(gridOptions);
 
-			GridStack.init().on("dragstop", (event, element) => {
-				const node = element.gridstackNode;
-				// `this` will only access your Vue instance if you used an arrow function, otherwise `this` binds to window scope. see https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/
-				info.value = `you just dragged node #${node.id} to ${node.x},${node.y} – good job!`;
-			});
+			calculateGrid(grid, shelf, basicBox, userBoxes);
+
+			initGridDragged(grid, userBoxes);
+			initGridResize(grid, userBoxes);
 		})
 
 		watch([shelf, basicBox, userBoxes], () => {
 			if(mounted) {
-				calculateGrid(shelf, basicBox, userBoxes);
+				calculateGrid(grid, shelf, basicBox, userBoxes);
 			}
 		})
 
@@ -295,30 +289,21 @@ export default {
 
 		return {
 			shelf,
-			// testShelf,
 			basicBox,
 			possibleBasicBoxDimensions,
-			// possibleBoxes,
-			// possibleUserBoxes,
 			userBoxes,
-			// gridHeight,
-			// gridWidth,
-			// userBoxesEmptySpaces,
-			// userBoxesGridSpace,
 			possibleUserBoxDimensions,
-			// sameUserBoxes,
 			downloadSVG,
 			boxCoordinates,
 			materialRef,
-
-			getGridStyle,
+			invalidBoxes,
+			info,
 
 			// Functions
-			// addBasicBox,
 			createBox,
 			getSVG,
-			invalidBoxes,
-			info
+			createBoxToArray,
+			getGridStyle,
 		};
 
 	},

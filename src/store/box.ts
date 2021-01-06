@@ -12,6 +12,8 @@ import {
 	isValidShortWidthAtStep,
 } from './calculator';
 
+import GridStack from 'gridstack/dist/gridstack-h5.js';
+
 /**
  * Function to create a new Box fitting to the shelf giving the smallest possible box Dimensions
  *
@@ -36,10 +38,14 @@ export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 		get h() {
 			return box.possibleBoxDimensions.heights.indexOf(box.height) + 1;
 		},
-		// minW: 1,
-		// minH: 1,
-		// maxW: possibleBoxDimensions.widths.length-1,
-		// maxH : possibleBoxDimensions.heights.length-1,
+		minW: 1,
+		minH: 1,
+		get maxW() {
+			return box.possibleBoxDimensions.widths.length-1;
+		},
+		get maxH() {
+			return box.possibleBoxDimensions.heights.length-1;
+		},
 
 
 		connectorLeft: false,
@@ -88,13 +94,13 @@ export function createTestBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions
 }
 
 /**
- * Function to push a new Box into the given Box Array
+ * Function to create a new Box into the given Box Array
  *
  * @param boxes Boxes Array to push the Box in
  * @param shelf Shelf to wich the Boxes Array belongs
  * @param possibleBoxDimensions possible Box Dimensions of the Shelf
  */
-export function addBoxToArray(boxes: Box[], shelf: Shelf, possibleBoxDimensions: BoxDimensions): void {
+export function createBoxToArray(boxes: Box[], shelf: Shelf, possibleBoxDimensions: BoxDimensions): void {
 	boxes.push(createBox(shelf, possibleBoxDimensions));
 }
 
@@ -153,56 +159,52 @@ export function calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions: B
 	};
 }
 
-// export function calculatePossibleBoxes(possibleBasicBoxDimensions: BoxDimensions, basicBox: Box): Box[] {
-//     const boxes: Box[] = [];
-
-//     possibleBasicBoxDimensions.heights.forEach((height, hIndex) => {
-//         possibleBasicBoxDimensions.widths.forEach((width, wIndex) => {
-//             const box: Box = {
-//                 height: height,
-//                 width: width,
-//                 depth: basicBox.depth,
-
-//                 gridX: 0,
-//                 gridY: 0,
-
-//                 get gridSizeX() {
-//                     return wIndex + 1;
-//                 },
-//                 get gridSizeY() {
-//                     return hIndex + 1;
-//                 },
-
-//                 connectorLeft: false,
-//                 connectorRight: false,
-
-//                 get connector(): Connector {
-//                     if (box.connectorLeft && box.connectorRight) return 'BOTH';
-//                     if (box.connectorLeft) return 'LEFT';
-//                     if (box.connectorRight) return 'RIGHT';
-//                     else return 'NONE';
-//                 },
-
-//                 backSide: false,
-
-//                 get name() {
-//                     return `Box${hIndex + 1}.${wIndex + 1}`;
-//                 },
-//             };
-
-//             boxes.push(box);
-//         });
-//     });
-
-//     return boxes;
-// }
-
 export function updatBoxDimensions(box: Box, newBoxDimesnions: BoxDimensions): void {
 	box.possibleBoxDimensions = newBoxDimesnions;
 }
 
 export function boxDimensionValid(box: Box, boxDimensions: BoxDimensions): boolean {
 	return boxDimensions.heights.includes(box.height) && boxDimensions.widths.includes(box.width);
+}
+
+export function initGridDragged(grid: GridStack, userBoxes: Box[]): void {
+	grid.on("dragstop", (event, element) => {
+		const node = element.gridstackNode;
+		updateBoxGridPosition(userBoxes, node);
+	});
+}
+
+export function initGridResize(grid: GridStack, userBoxes: Box[]): void {
+	grid.on("resizestop", (event, element) => {
+		const node = element.gridstackNode;
+		updateBoxSize(userBoxes, node);
+	});
+}
+
+export function updateBoxGridPosition(boxes: Box[], changedBox: Box) {
+	boxes.forEach((box) => {
+			if (box.id === changedBox.id) {
+				box.x = changedBox.x;
+				box.y = changedBox.y;
+			}
+	});
+}
+
+export function updateBoxSize(boxes: Box[], changedBox: Box) {
+	boxes.some((box) => {
+			if (box.id === changedBox.id) {
+				if (changedBox.w - 1 > box.possibleBoxDimensions.widths.length - 1) {
+					console.error('Box does not for the given Box Dimensions(width)');
+					return false;
+				}
+				if (changedBox.h - 1 > box.possibleBoxDimensions.heights.length) {
+					console.error('Box does not for the given Box Dimensions(height)');
+					return true;
+				}
+				box.width = box.possibleBoxDimensions.widths[changedBox.w - 1];
+				box.height = box.possibleBoxDimensions.heights[changedBox.h - 1];
+			}
+	});
 }
 
 function getRandomInt(min, max) {
