@@ -27,4 +27,15 @@
     }
   }
 }
+
+.icon {
+	height: 24px;
+}
+
+
+
+// Fixes oruga setting disabled attribute to false instead of ommiting it
+[disabled='false'] {
+	opacity: 1 !important;
+}
 </style>
