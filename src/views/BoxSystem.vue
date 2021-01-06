@@ -106,7 +106,7 @@
 
 				<o-button @click="downloadSVG(box, materialRef)">Download SVGs of Box</o-button>
 
-				<div v-html="getSVG(box, materialRef, 'groundSide')"></div>
+				<!-- <div v-html="getSVG(box, materialRef, 'groundSide')"></div> -->
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
@@ -130,11 +130,9 @@ import {
   initGridDragged,
   initGridResize,
 } from '../store/box';
-
 import {  calculateGrid } from '../store/boxGrid';
-// import { calculateBoxesGridArea, getMaxGridDimensions } from '../store/boxGrid';
 import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../store/svg';
-import { getGridStyle } from '../store/style'
+
 
 
 import GridStack from 'gridstack/dist/gridstack-h5.js'
@@ -305,7 +303,6 @@ export default {
 			createBox,
 			getSVG,
 			createBoxToArray,
-			getGridStyle,
 		};
 
 	},
@@ -318,20 +315,36 @@ export default {
 	--gridstack-columns: 12;
 }
 
+.box {
+	&--invalid {
+		background: repeating-linear-gradient(
+		45deg,
+		rgb(168, 40, 40),
+		rgb(168, 40, 40) 10px,
+		hsla(0, 0%, 100%, 0) 10px,
+		hsla(0, 0%, 100%, 0) 20px
+		);
+	}
+
+	&--backside {
+		background-color: black;
+	}
+
+}
+
 .grid-stack {
 	border: 1px solid blue;
 
 	&-item {
-		border: 1px solid;
+		border: 3px solid;
 
-		// min-width: (100% / var(--gristack-columns));
+		&-content {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 
-		// @for $i from 1 through var(--gristack-columns) {
-		// 	&[gs-w='#{$i}'] { width: (100% / var(--gristack-columns)) * $i; }
-		// 	&[gs-x='#{$i}'] { left: (100% / var(--gristack-columns)) * $i; }
-		// 	&[gs-min-w='#{$i}'] { min-width: (100% / var(--gristack-columns)) * $i; }
-		// 	&[gs-max-w='#{$i}'] { max-width: (100% / var(--gristack-columns)) * $i; }
-		// }
+			background-color: white;
+		}
 	}
 }
 

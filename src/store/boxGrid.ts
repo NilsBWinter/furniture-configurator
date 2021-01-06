@@ -14,13 +14,20 @@ export function createGridColumnsCSS(columns: number): void {
     document.getElementsByClassName('grid-stack')[0].appendChild(style);
 }
 
+export function addBoxCSS(box: Box): void {
+    const element = document.querySelectorAll(`[gs-id="${box.id}"]`)[0];
+    if (!box.validDimensions) element.classList.add('box--invalid');
+    if (box.backSide) element.classList.add('box--backside');
+}
+
 export function calculateGrid(grid: GridStack, shelf: Shelf, basicBox: Box, userBoxes: Box[]): void {
 
 	grid.removeAll();
 
-	createGridColumnsCSS(shelf.width / basicBox.width);
+    createGridColumnsCSS(shelf.width / basicBox.width);
 	userBoxes.forEach((box) => {
-		grid.addWidget(box);
+        grid.addWidget(box);
+        addBoxCSS(box);
 	});
 
 }
