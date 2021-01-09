@@ -15,8 +15,6 @@ import BoxSystem from './BoxSystem.vue'
 import { Material, ProcessingArea } from '@/store/calculator';
 
 export default {
-    name: "calculator",
-
     setup(){
 
 
