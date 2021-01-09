@@ -33,7 +33,7 @@
 				</o-select>
 			</o-field>
 
-			<o-field label="basicBoxHeight:">
+			<o-field label="basicBoxWidth:">
 				<o-select v-model="basicBox.width" rounded>
 					<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
 						{{ width }}
@@ -64,7 +64,7 @@
 					<o-field label="Box height:">
 						<o-select v-model="box.height" rounded>
 							<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
-								{{ height }}
+								{{ index + 1 }}
 							</option>
 						</o-select>
 					</o-field>
@@ -72,7 +72,7 @@
 					<o-field label="Box width:">
 						<o-select v-model="box.width" rounded>
 							<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
-								{{ width }}
+								{{ index + 1 }}
 							</option>
 						</o-select>
 					</o-field>
@@ -99,8 +99,6 @@
 				</div>
 
 				<o-button @click="downloadSVG(box, materialRef)">Download SVGs of Box</o-button>
-
-				<!-- <div v-html="getSVG(box, materialRef, 'groundSide')"></div> -->
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
@@ -210,7 +208,8 @@ export default {
 	},
 
 	setup(props) {
-		const rangeSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		const basicBoxSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		const userBoxSteps = [1, 2, 3, 4, 5];
 
 		const processingArea: ProcessingArea = ref(props.processingArea).value;
 		const materialRef = ref<Material>(props.material);
@@ -227,12 +226,12 @@ export default {
 
 		// let userBoxes: Box[] = [];
 
-		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, processingArea, rangeSteps));
+		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, processingArea, basicBoxSteps));
 
 		const basicBox = reactive<Box>(createBox(shelf, possibleBasicBoxDimensions.value));
 
 		const possibleUserBoxDimensions = computed(
-			(): BoxDimensions => calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions.value, basicBox),
+			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, processingArea, basicBox, userBoxSteps),
 		);
 
 		const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));

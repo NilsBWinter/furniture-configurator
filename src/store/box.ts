@@ -6,10 +6,10 @@ import {
 	ProcessingArea,
 	isValidShortDepth,
 	isValidLongDepth,
-	isValidLongHeightAtStep,
-	isValidLongWidthAtStep,
-	isValidShortHeightAtStep,
-	isValidShortWidthAtStep,
+	isValidLongHeight,
+	isValidLongWidth,
+	isValidShortHeight,
+	isValidShortWidth,
 } from './calculator';
 
 import GridStack from 'gridstack/dist/gridstack-h5.js';
@@ -123,11 +123,13 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 	else throw new Error('shelf.depth is not a valid number');
 
 	rangeSteps.forEach((step) => {
-		if (isValidLongHeightAtStep(shelf, processingArea, step)) longHeights.push(shelf.height / step);
-		if (isValidLongWidthAtStep(shelf, processingArea, step)) longWidths.push(shelf.width / step);
+		const height = shelf.height / step;
+		const width = shelf.width / step;
+		if (isValidLongHeight(shelf, processingArea, height)) longHeights.push(height);
+		if (isValidLongWidth(shelf, processingArea, width)) longWidths.push(width);
 
-		if (isValidShortHeightAtStep(shelf, processingArea, step)) shortHeights.push(shelf.height / step);
-		if (isValidShortWidthAtStep(shelf, processingArea, step)) shortWidths.push(shelf.width / step);
+		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
+		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);
 	});
 
 	if (isValidShortDepth(depth, shelf, processingArea) && isValidLongDepth(depth, shelf, processingArea))
@@ -151,11 +153,22 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
  * @param possibleBasicBoxDimensions Possible Box Dimensions of the base Box
  * @param basicBox the base Box
  */
-export function calculatePossibleUserBoxDimensions(possibleBasicBoxDimensions: BoxDimensions, basicBox: Box) {
+export function calculatePossibleUserBoxDimensions(shelf: Shelf, processingArea: ProcessingArea, basicBox: Box, rangeSteps: number[]) {
+	const heights: number[] = [];
+	const widths: number[] = [];
+
+	rangeSteps.forEach((step) => {
+		const height = basicBox.height * step;
+		const width = basicBox.width * step;
+		if (isValidLongHeight(shelf, processingArea, height)) heights.push(height);
+		if (isValidLongWidth(shelf, processingArea, width)) widths.push(width);
+	})
 	return {
-		heights: possibleBasicBoxDimensions.heights.filter((height) => height >= basicBox.height),
-		widths: possibleBasicBoxDimensions.widths.filter((width) => width >= basicBox.width),
-		depth: possibleBasicBoxDimensions.depth,
+		// heights: possibleBasicBoxDimensions.heights.filter((height) => height >= basicBox.height),
+		heights: heights,
+		// widths: possibleBasicBoxDimensions.widths.filter((width) => width >= basicBox.width),
+		widths: widths,
+		depth: basicBox.depth,
 	};
 }
 

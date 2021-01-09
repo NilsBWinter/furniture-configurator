@@ -100,29 +100,21 @@ export interface BoxDimensions {
 	depth: number;
 }
 
-export function isValidLongHeightAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-	return shelf.height % step === 0 && shelf.height / step <= processingArea.longSide;
+export function isValidLongHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
+	return shelf.height % height === 0 && height <= processingArea.longSide;
 }
 
-export function isValidShortHeightAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-	return shelf.height % step === 0 && shelf.height / step <= processingArea.shortSide;
+export function isValidShortHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
+	return shelf.height % height === 0 && height <= processingArea.shortSide;
 }
 
-export function isValidLongWidthAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-	return shelf.width % step === 0 && shelf.width / step <= processingArea.longSide;
+export function isValidLongWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
+	return shelf.width % width === 0 && width <= processingArea.longSide;
 }
 
-export function isValidShortWidthAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-	return shelf.width % step === 0 && shelf.width / step <= processingArea.shortSide;
+export function isValidShortWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
+	return shelf.width % width === 0 && width <= processingArea.shortSide;
 }
-
-// export function isValidLongDepthAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-//     return shelf.depth % step === 0 && shelf.depth / step <= processingArea.longSide;
-// }
-
-// export function isValidShortDepthAtStep(shelf: Shelf, processingArea: ProcessingArea, step: number): boolean {
-//     return shelf.depth % step === 0 && shelf.depth / step <= processingArea.shortSide;
-// }
 
 export function isValidShortDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
 	return depth === shelf.depth && depth <= processingArea.shortSide && depth >= 0;
