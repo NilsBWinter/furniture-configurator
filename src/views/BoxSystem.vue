@@ -27,18 +27,20 @@
 
 			<o-field label="basicBoxHeight:">
 				<o-select v-model="basicBox.height" rounded>
-					<option v-for="height in possibleBasicBoxDimensions.heights" :key="height" :value="height">
-						{{ height }}
+					<option v-for="(height, index) in possibleBasicBoxDimensions.heights" :key="index" :value="height">
+						{{ index + 1 }}
 					</option>
 				</o-select>
+				corresponds to a height of {{basicBox.height}} mm
 			</o-field>
 
 			<o-field label="basicBoxWidth:">
 				<o-select v-model="basicBox.width" rounded>
-					<option v-for="width in possibleBasicBoxDimensions.widths" :key="width" :value="width">
-						{{ width }}
+					<option v-for="(width, index) in possibleBasicBoxDimensions.widths" :key="index" :value="width">
+						{{ index + 1 }}
 					</option>
 				</o-select>
+				corresponds to a width of {{basicBox.width}} mm
 			</o-field>
 
 			<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
@@ -49,7 +51,9 @@
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
 			<p>{{info}}</p>
 			<div v-if="invalidBoxes.length > 0">You have {{invalidBoxes.length}} invalid Boxes</div>
-			<div class="grid-stack"></div>
+			<div id="grid">
+				<div class="grid-stack"></div>
+			</div>
 		</div>
 
 		<div>
@@ -67,6 +71,7 @@
 								{{ index + 1 }}
 							</option>
 						</o-select>
+						corresponds to a height of {{box.height}} mm
 					</o-field>
 
 					<o-field label="Box width:">
@@ -75,6 +80,7 @@
 								{{ index + 1 }}
 							</option>
 						</o-select>
+						corresponds to a width of {{box.width}} mm
 					</o-field>
 				</div>
 
@@ -122,13 +128,14 @@ import {
   initGridDragged,
   initGridResize,
 } from '../store/box';
-import {  calculateGrid } from '../store/boxGrid';
+import {  calculateGrid, resetGrid } from '../store/boxGrid';
 import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../store/svg';
 
 
 
 import GridStack from 'gridstack/dist/gridstack-h5.js'
 import "gridstack/dist/gridstack.css";
+import "gridstack/dist/gridstack-extra.css";
 import { GridStackOptions } from 'gridstack';
 
 
@@ -189,9 +196,19 @@ function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensi
 
 const testShelf = ref<Shelf>({
 	height: 2000,
-	width: 1800,
+	width: 3000,
 	depth: 400,
 });
+
+function gridOptions(shelf: Shelf, basicBox: Box): GridStackOptions {
+	return {
+		column: shelf.width / basicBox.width,
+		row: shelf.height / basicBox.height,
+		disableOneColumnMode: true,
+		float: true,
+		cellHeight: `50px`,
+	}
+}
 
 export default {
 	name: 'BoxSystem',
@@ -224,7 +241,7 @@ export default {
 
 		shelf = testShelf.value;
 
-		// let userBoxes: Box[] = [];
+		const userBoxes= reactive<Box[]>([]);
 
 		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, processingArea, basicBoxSteps));
 
@@ -234,26 +251,19 @@ export default {
 			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, processingArea, basicBox, userBoxSteps),
 		);
 
-		const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));
+		// const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));
 
 		const info = ref('');
 
 		const invalidBoxes = ref<Box[]>([]);
 
-		const gridOptions: GridStackOptions = {
-			// column: shelf.width / basicBox.width,
-			minRow: 1,
-			maxRow: shelf.height / basicBox.height,
-			disableOneColumnMode: true,
-			float: true,
-			cellHeight: `50px`,
-		}
+
 		let grid: GridStack;
 
 		onMounted(() => {
 			mounted = true;
 
-			grid = GridStack.init(gridOptions);
+			grid = GridStack.init(gridOptions(shelf, basicBox));
 
 			calculateGrid(grid, shelf, basicBox, userBoxes);
 
@@ -263,7 +273,9 @@ export default {
 
 		watch([shelf, basicBox, userBoxes], () => {
 			if(mounted) {
-				calculateGrid(grid, shelf, basicBox, userBoxes);
+				// TODO change rows & columns of grid based on basic box
+				resetGrid('grid', grid);
+				calculateGrid(gridOptions(shelf, basicBox), shelf, basicBox, userBoxes);
 			}
 		})
 

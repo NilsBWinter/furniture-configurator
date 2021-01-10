@@ -1,5 +1,6 @@
 import { Shelf, Box } from './calculator';
 import GridStack from 'gridstack/dist/gridstack-h5.js';
+import { GridStackOptions } from 'gridstack';
 
 export function createGridColumnsCSS(columns: number): void {
     const style = document.createElement('style');
@@ -20,11 +21,30 @@ export function addBoxCSS(box: Box): void {
     if (box.backSide) element.classList.add('box--backside');
 }
 
-export function calculateGrid(grid: GridStack, shelf: Shelf, basicBox: Box, userBoxes: Box[]): void {
+export function resetGrid(gridParentElementId: string, grid: GridStack): void {
+    const gridParentElement = document.getElementById(gridParentElementId);
 
-	grid.removeAll();
+    const gridElement = document.createElement('div');
+    gridElement.classList.add('grid-stack')
 
-    createGridColumnsCSS(shelf.width / basicBox.width);
+    if(gridParentElement != null) {
+        while (gridParentElement.firstChild) {
+            gridParentElement.removeChild(gridParentElement.firstChild);
+        }
+
+        gridParentElement.appendChild(gridElement);
+    } else console.error('No Grid Element');
+}
+
+export function calculateGrid(gridOptions: GridStackOptions, shelf: Shelf, basicBox: Box, userBoxes: Box[]): void {
+    const columns = shelf.width / basicBox.width;
+    const gridElement = document.getElementsByClassName('grid-stack')[0];
+    const grid = GridStack.init(gridOptions);
+
+    grid.removeAll();
+
+    if(columns > 12) createGridColumnsCSS(columns);
+    else gridElement.classList.add(`grid-stack-${columns}`);
 	userBoxes.forEach((box) => {
         grid.addWidget(box);
         addBoxCSS(box);

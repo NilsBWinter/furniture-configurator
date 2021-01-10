@@ -41,10 +41,10 @@ export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 		minW: 1,
 		minH: 1,
 		get maxW() {
-			return box.possibleBoxDimensions.widths.length-1;
+			return box.possibleBoxDimensions.widths.length;
 		},
 		get maxH() {
-			return box.possibleBoxDimensions.heights.length-1;
+			return box.possibleBoxDimensions.heights.length;
 		},
 
 
@@ -160,13 +160,11 @@ export function calculatePossibleUserBoxDimensions(shelf: Shelf, processingArea:
 	rangeSteps.forEach((step) => {
 		const height = basicBox.height * step;
 		const width = basicBox.width * step;
-		if (isValidLongHeight(shelf, processingArea, height)) heights.push(height);
-		if (isValidLongWidth(shelf, processingArea, width)) widths.push(width);
+		if (basicBox.height * step <= shelf.height) heights.push(height);
+		if (basicBox.width * step <= shelf.width) widths.push(width);
 	})
 	return {
-		// heights: possibleBasicBoxDimensions.heights.filter((height) => height >= basicBox.height),
 		heights: heights,
-		// widths: possibleBasicBoxDimensions.widths.filter((width) => width >= basicBox.width),
 		widths: widths,
 		depth: basicBox.depth,
 	};
@@ -204,19 +202,19 @@ export function updateBoxGridPosition(boxes: Box[], changedBox: Box) {
 }
 
 export function updateBoxSize(boxes: Box[], changedBox: Box) {
-	boxes.every((box) => {
-			if (box.id === changedBox.id) {
-				if (changedBox.w - 1 > box.possibleBoxDimensions.widths.length - 1) {
-					console.error('Box does not for the given Box Dimensions(width)');
-					return false;
-				}
-				if (changedBox.h - 1 > box.possibleBoxDimensions.heights.length) {
-					console.error('Box does not for the given Box Dimensions(height)');
-					return false;
-				}
-				box.width = box.possibleBoxDimensions.widths[changedBox.w - 1];
-				box.height = box.possibleBoxDimensions.heights[changedBox.h - 1];
+	boxes.forEach((box) => {
+		if (box.id === changedBox.id) {
+			if (changedBox.w > box.possibleBoxDimensions.widths.length) {
+				console.error('Box does not for the given Box Dimensions(width)');
+				return false;
 			}
+			if (changedBox.h > box.possibleBoxDimensions.heights.length) {
+				console.error('Box does not for the given Box Dimensions(height)');
+				return false;
+			}
+			box.width = box.possibleBoxDimensions.widths[changedBox.w - 1];
+			box.height = box.possibleBoxDimensions.heights[changedBox.h - 1];
+		}
 	});
 }
 
