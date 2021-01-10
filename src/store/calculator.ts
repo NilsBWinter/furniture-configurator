@@ -116,10 +116,11 @@ export function isValidShortWidth(shelf: Shelf, processingArea: ProcessingArea, 
 	return shelf.width % width === 0 && width <= processingArea.shortSide;
 }
 
+export function isValidLongDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
+	return depth === shelf.depth && depth <= processingArea.longSide && depth >= 0;
+}
+
 export function isValidShortDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
 	return depth === shelf.depth && depth <= processingArea.shortSide && depth >= 0;
 }
 
-export function isValidLongDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
-	return depth === shelf.depth && depth <= processingArea.longSide && depth >= 0;
-}

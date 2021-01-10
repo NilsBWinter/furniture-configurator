@@ -56,27 +56,36 @@
 </template>
 
 <script lang="ts">
-import {computed, ref} from 'vue';
+import {computed, reactive, ref, watch} from 'vue';
 
 import {Material, ProcessingArea} from '../store/calculator';
 
 export default {
     name:"BasicSettings",
 
-    setup(){
+    emits: ['update:material', 'update:processingArea'],
+
+    setup(props, context){
 
         const tolerance = ref(0);
 
-        const _processingArea: ProcessingArea = {
+        const processingArea = reactive<ProcessingArea> ({
             longSide: 0,
             shortSide: 0,
-        };
-        const processingArea = ref(_processingArea);
+        });
 
-        const material = ref<Material>({
+        const material = reactive<Material>({
             type: "",
             thickness: 0,
         })
+
+        watch(processingArea, () => {
+				context.emit('update:processingArea', processingArea);
+        });
+
+        watch(material, () => {
+				context.emit('update:material', material);
+		});
 
 
         return {

@@ -5,11 +5,11 @@ import {
 	Connector,
 	ProcessingArea,
 	isValidShortDepth,
-	isValidLongDepth,
 	isValidLongHeight,
 	isValidLongWidth,
 	isValidShortHeight,
 	isValidShortWidth,
+	isValidLongDepth,
 } from './calculator';
 
 import GridStack from 'gridstack/dist/gridstack-h5.js';
@@ -118,15 +118,14 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 	const shortHeights: number[] = [];
 	const shortWidths: number[] = [];
 
-	let depth: number;
-	if (isValidShortDepth(shelf.depth, shelf, processingArea) || isValidLongDepth(shelf.depth, shelf, processingArea)) depth = shelf.depth;
-	else throw new Error('shelf.depth is not a valid number');
+	const depth = shelf.depth;
 
 	rangeSteps.forEach((step) => {
 		const height = shelf.height / step;
 		const width = shelf.width / step;
 		if (isValidLongHeight(shelf, processingArea, height)) longHeights.push(height);
 		if (isValidLongWidth(shelf, processingArea, width)) longWidths.push(width);
+		longHeights.push(height);
 
 		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
 		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);

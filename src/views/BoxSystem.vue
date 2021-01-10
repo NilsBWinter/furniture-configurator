@@ -14,7 +14,7 @@
             </o-field>
 
 			<o-field label="Shelf Depth in mm:">
-                <o-input type="number" v-model.number="shelf.depth" rounded />
+                <o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="processingArea.longSide" />
             </o-field>
 		</div>
 
@@ -209,7 +209,6 @@ function gridOptions(shelf: Shelf, basicBox: Box): GridStackOptions {
 		cellHeight: `50px`,
 	}
 }
-
 export default {
 	name: 'BoxSystem',
 
@@ -233,13 +232,13 @@ export default {
 
 		let mounted = false;
 
-		let shelf = reactive<Shelf>({
+		const shelf = reactive<Shelf>({
 			height: 0,
 			width: 0,
 			depth: 0,
 		});
 
-		shelf = testShelf.value;
+		// shelf = testShelf.value;
 
 		const userBoxes= reactive<Box[]>([]);
 
