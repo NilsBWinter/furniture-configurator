@@ -24,7 +24,7 @@ export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 	const box: Box = {
 		height: boxDimensions.heights[0],
 		width: boxDimensions.widths[0],
-		depth: shelf.depth,
+		depth: shelf.depth ? shelf.depth : 0,
 
 		possibleBoxDimensions: boxDimensions,
 
@@ -118,20 +118,22 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 	const shortHeights: number[] = [];
 	const shortWidths: number[] = [];
 
-	const depth = shelf.depth;
+	const depth = shelf.depth ? shelf.depth : 0;
+	const shelfHeight = shelf.height ? shelf.height : 0;
+	const shelfWidth = shelf.width ? shelf.width : 0;
 
 	rangeSteps.forEach((step) => {
-		const height = shelf.height / step;
-		const width = shelf.width / step;
+		const height = shelfHeight / step;
+		const width = shelfWidth / step;
 		if (isValidLongHeight(shelf, processingArea, height)) longHeights.push(height);
 		if (isValidLongWidth(shelf, processingArea, width)) longWidths.push(width);
-		longHeights.push(height);
 
 		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
 		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);
 	});
+	debugger;
 
-	if (isValidShortDepth(depth, shelf, processingArea) && isValidLongDepth(depth, shelf, processingArea))
+	if (!isValidLongDepth(shelf, processingArea, depth))
 		return {
 			heights: longHeights.sort((a, b) => a - b),
 			widths: longWidths.sort((a, b) => a - b),
@@ -155,12 +157,14 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 export function calculatePossibleUserBoxDimensions(shelf: Shelf, processingArea: ProcessingArea, basicBox: Box, rangeSteps: number[]) {
 	const heights: number[] = [];
 	const widths: number[] = [];
+	const shelfHeight = shelf.height ? shelf.height : 0;
+	const shelfWidth = shelf.width ? shelf.width : 0;
 
 	rangeSteps.forEach((step) => {
 		const height = basicBox.height * step;
 		const width = basicBox.width * step;
-		if (basicBox.height * step <= shelf.height) heights.push(height);
-		if (basicBox.width * step <= shelf.width) widths.push(width);
+		if (basicBox.height * step <= shelfHeight) heights.push(height);
+		if (basicBox.width * step <= shelfWidth) widths.push(width);
 	})
 	return {
 		heights: heights,

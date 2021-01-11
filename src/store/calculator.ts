@@ -3,15 +3,15 @@
  */
 export interface Material {
 	type: string;
-	thickness: number;
+	thickness?: number;
 }
 
 /**
  * Interface for the Maximum possible Proccings Area
  */
 export interface ProcessingArea {
-	longSide: number;
-	shortSide: number;
+	longSide?: number;
+	shortSide?: number;
 }
 
 // export function isProcessingArea(obj: unknown): obj is ProcessingArea {
@@ -86,9 +86,9 @@ export enum Connector {
  * interface of a Shelf
  */
 export interface Shelf {
-	height: number;
-	width: number;
-	depth: number;
+	height?: number;
+	width?: number;
+	depth?: number;
 }
 
 /**
@@ -101,26 +101,45 @@ export interface BoxDimensions {
 }
 
 export function isValidLongHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
-	return shelf.height % height === 0 && height <= processingArea.longSide;
+	return (
+		typeof shelf.height !== 'undefined' &&
+		typeof processingArea.longSide !== 'undefined' &&
+		shelf.height % height === 0 &&
+		height <= processingArea.longSide
+	);
 }
 
 export function isValidShortHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
-	return shelf.height % height === 0 && height <= processingArea.shortSide;
+	return (
+		typeof shelf.height !== 'undefined' &&
+		typeof processingArea.shortSide !== 'undefined' &&
+		shelf.height % height === 0 &&
+		height <= processingArea.shortSide
+	);
 }
 
 export function isValidLongWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
-	return shelf.width % width === 0 && width <= processingArea.longSide;
+	return (
+		typeof shelf.width !== 'undefined' &&
+		typeof processingArea.longSide !== 'undefined' &&
+		shelf.width % width === 0 &&
+		width <= processingArea.longSide
+	);
 }
 
 export function isValidShortWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
-	return shelf.width % width === 0 && width <= processingArea.shortSide;
+	return (
+		typeof shelf.width !== 'undefined' &&
+		typeof processingArea.shortSide !== 'undefined' &&
+		shelf.width % width === 0 &&
+		width <= processingArea.shortSide
+	);
 }
 
-export function isValidLongDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
-	return depth === shelf.depth && depth <= processingArea.longSide && depth >= 0;
+export function isValidLongDepth(shelf: Shelf, processingArea: ProcessingArea, depth: number): boolean {
+	return typeof processingArea.longSide !== 'undefined' && depth === shelf.depth && depth <= processingArea.longSide && depth >= 0;
 }
 
-export function isValidShortDepth(depth: number, shelf: Shelf, processingArea: ProcessingArea): boolean {
-	return depth === shelf.depth && depth <= processingArea.shortSide && depth >= 0;
+export function isValidShortDepth(shelf: Shelf, processingArea: ProcessingArea, depth: number): boolean {
+	return typeof processingArea.shortSide !== 'undefined' && depth === shelf.depth && depth <= processingArea.shortSide && depth >= 0;
 }
-

@@ -69,14 +69,11 @@ export default {
 
         const tolerance = ref(0);
 
-        const processingArea = reactive<ProcessingArea> ({
-            longSide: 0,
-            shortSide: 0,
-        });
+        const processingArea = reactive<ProcessingArea> ({        });
 
         const material = reactive<Material>({
             type: "",
-            thickness: 0,
+            thickness: undefined,
         })
 
         watch(processingArea, () => {

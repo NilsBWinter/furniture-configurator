@@ -37,7 +37,8 @@ export function resetGrid(gridParentElementId: string, grid: GridStack): void {
 }
 
 export function calculateGrid(gridOptions: GridStackOptions, shelf: Shelf, basicBox: Box, userBoxes: Box[]): void {
-    const columns = shelf.width / basicBox.width;
+    const shelfWidth = shelf.width ? shelf.width : 0;
+    const columns = shelfWidth;
     const gridElement = document.getElementsByClassName('grid-stack')[0];
     const grid = GridStack.init(gridOptions);
 

@@ -201,9 +201,12 @@ const testShelf = ref<Shelf>({
 });
 
 function gridOptions(shelf: Shelf, basicBox: Box): GridStackOptions {
+	const shelfHeight = shelf.height ? shelf.height : 0;
+	const shelfWidth = shelf.width ? shelf.width : 0;
+
 	return {
-		column: shelf.width / basicBox.width,
-		row: shelf.height / basicBox.height,
+		column: shelfWidth / basicBox.width,
+		row: shelfHeight / basicBox.height,
 		disableOneColumnMode: true,
 		float: true,
 		cellHeight: `50px`,
@@ -227,27 +230,26 @@ export default {
 		const basicBoxSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		const userBoxSteps = [1, 2, 3, 4, 5];
 
-		const processingArea: ProcessingArea = ref(props.processingArea).value;
 		const materialRef = ref<Material>(props.material);
 
 		let mounted = false;
 
 		const shelf = reactive<Shelf>({
-			height: 0,
-			width: 0,
-			depth: 0,
+			// height: 0,
+			// width: 0,
+			// depth: 0,
 		});
 
 		// shelf = testShelf.value;
 
 		const userBoxes= reactive<Box[]>([]);
 
-		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, processingArea, basicBoxSteps));
+		const possibleBasicBoxDimensions = computed((): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, props.processingArea, basicBoxSteps));
 
 		const basicBox = reactive<Box>(createBox(shelf, possibleBasicBoxDimensions.value));
 
 		const possibleUserBoxDimensions = computed(
-			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, processingArea, basicBox, userBoxSteps),
+			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, props.processingArea, basicBox, userBoxSteps),
 		);
 
 		// const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));

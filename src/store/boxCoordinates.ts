@@ -20,11 +20,12 @@ export type Coordinates = {
 
 /**
  * Function to create the Coordinates of a box for rendering & export
- * 
+ *
  * @param box Box for the Coordinates
  * @param material Material of the Box
  */
 export function boxCoordinates(box: Box, material: Material): Coordinates {
+	const mTchickness = material.thickness ? material.thickness : 0;
 	const boxTenonSize = 10;
 	const boxPositiveTenons = 2;
 	const boxNegativeTenons = boxPositiveTenons + 1;
@@ -32,19 +33,19 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 	const slotOffSetEdgeX = 20;
 	const slotOffSetEdgeY = 10 + boxTenonSize;
-	const slotHeight = material.thickness;
+	const slotHeight = mTchickness;
 	const slotWidth = box.depth / boxTenonsSum;
 
 	const connectorTenonWidth = slotWidth;
-	const connectorTenonLength = material.thickness * 2;
+	const connectorTenonLength = mTchickness * 2;
 
 	const backTenonWidth = box.height / boxTenonsSum;
-	const backTenonLength = material.thickness;
+	const backTenonLength = mTchickness;
 	const backTenonOffSetEdgeY = slotOffSetEdgeY + slotHeight;
 
 	/**
 	 * function to create the Coordinates of a Side Component of a Box
-	 * 
+	 *
 	 * @param connector Connector Type of the Box
 	 * @param side Side if left or right side should be created
 	 */
@@ -70,7 +71,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 		/**
 		 * Function to create the Points of the Horizontal Slots of the side Components for the bottom & top Component
-		 * 
+		 *
 		 * @param side left or right side to create horizontal slots on
 		 * @param height height of the slots
 		 * @param width width of the slots
@@ -130,12 +131,12 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 		/**
 		 * Function to create the Points of the Vertical Slots of the side Components for the back Component
-		 * 
+		 *
 		 * @param side left or right side to create horizontal slots on
 		 * @param height height of the slots
 		 * @param width width of the slots
 		 * @param offSetEdgeY offset to the outer Edge on the Y Axis
-		 * @param offSetEdgeX offset to the outer Edge on the X Axis 
+		 * @param offSetEdgeX offset to the outer Edge on the X Axis
 		 * @param box box to create Coordinates for
 		 */
 		function slotPointsVertical(backSlotHeight: number, backSlotWidth: number, offSetEdgeY: number, offSetEdgeX: number, box: Box ): { top: IModel; bottom: IModel } {
@@ -193,7 +194,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 	/**
 	 * Function to create the Coordinates of the Connector Component of a Box based on the size of the dimsnions of a tenon
-	 * 
+	 *
 	 * @param tenonWidth width of a tenon
 	 * @param tenonLength height of a tenon
 	 */
@@ -225,7 +226,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 	/**
 	 * Function to create the Coordinates of a ground Component of the Box, includes top & bottom Component
-	 * 
+	 *
 	 * @param box Box of wich the Component should be created for
 	 * @param material Material of the Box
 	 * @param tenonWidth width of the Tenons of the Box
@@ -234,7 +235,8 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 	 * @param connectorTenonLength length of the Connector Tenon (Connector Component to Connect 2 Boxes vertically)
 	 */
 	function boxGround(box: Box, material: Material, tenonWidth: number, offSetEdgeX: number, connectorTenonWidth: number, connectorTenonLength: number): IModel{
-		const tenonLength = material.thickness;
+		const mTchickness = material.thickness ? material.thickness : 0;
+		const tenonLength = mTchickness;
         // const sideTenonWidth = slotWidth;
         const connector = box.connector;
 
@@ -334,7 +336,7 @@ export function boxCoordinates(box: Box, material: Material): Coordinates {
 
 	/**
 	 * Function to create the Coordinates of the Backside of the Box
-	 * 
+	 *
 	 * @param tenonWidth width of the Tenons of the Backside to connect with the other sides
 	 * @param tenonLength length of the Tenons of the Backside to connect with the other sides
 	 * @param backTenonOffSetEdgeY offset to the outer Edge of the Component from the Tenons

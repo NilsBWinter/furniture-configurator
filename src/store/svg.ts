@@ -31,6 +31,8 @@ export function getSVG(box: Box, material: Material, component: Components, svgO
  * @param material Material to be processed
  */
 export function downloadBoxSVG(box: Box, material: Material): void {
+	const mTchickness = material.thickness ? material.thickness : 0;
+
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
 		strokeWidth: '0.1',
 		units: 'mm',
@@ -42,7 +44,7 @@ export function downloadBoxSVG(box: Box, material: Material): void {
 	}
 	const svgOptionsConnector: makerjs.exporter.ISVGRenderOptions = {
 		strokeWidth: '0.1',
-		origin: [0, material.thickness * 8],
+		origin: [0, mTchickness * 8],
 		units: 'mm',
 	}
 	const downloadSVGs: DownloadSVG= {
