@@ -45,12 +45,12 @@
         </div> -->
 
 
-        <div>
+        <!-- <div>
             <h2>your Settings</h2>
             <p> Processing Area: {{ processingArea.longSide}}mm * {{ processingArea.shortSide}}mm</p>
             <p> Material: {{material.type}} , {{material.thickness}}</p>
             <p> Tolerance: {{tolerance}}mm</p>
-        </div>
+        </div> -->
     </div>
 
 </template>
