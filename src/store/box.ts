@@ -1,18 +1,16 @@
+import { reactive } from 'vue';
 import {
 	Shelf,
 	BoxDimensions,
 	Box,
 	Connector,
 	ProcessingArea,
-	isValidShortDepth,
 	isValidLongHeight,
 	isValidLongWidth,
 	isValidShortHeight,
 	isValidShortWidth,
 	isValidLongDepth,
 } from './calculator';
-
-import GridStack from 'gridstack/dist/gridstack-h5.js';
 
 /**
  * Function to create a new Box fitting to the shelf giving the smallest possible box Dimensions
@@ -86,7 +84,7 @@ export function createTestBox(shelf: Shelf, possibleBoxDimensions: BoxDimensions
 
     box.x = gridX;
     box.y = gridY;
-    box.height = height;
+	box.height = height;
 	box.width = width;
 	// box.noMove = true;
 
