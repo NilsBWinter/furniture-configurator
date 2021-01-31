@@ -52,6 +52,8 @@
 		<div>
 			<h2>Box Grid</h2>
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
+			<o-button @click="fillTestBoxes">Add Example Boxes</o-button>
+			<o-button @click="userBoxes.length = 0">Delete all Boxes</o-button>
 			<p>{{ info }}</p>
 			<div v-if="invalidBoxes.length > 0">You have {{ invalidBoxes.length }} invalid Boxes</div>
 			<div id="grid">
@@ -101,7 +103,7 @@
 					<o-checkbox v-model="box.backSide"> Backside </o-checkbox>
 				</div>
 
-				<o-button @click="downloadSVG(box, materialRef)">Download SVGs of Box</o-button>
+				<o-button @click="downloadBoxSVG(box, materialRef)">Download SVGs of Box</o-button>
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
@@ -111,7 +113,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, onMounted, reactive, ref, Ref, watch } from 'vue';
+import { computed, ComputedRef, onMounted, reactive, ref, watch } from 'vue';
 
 import { Box, ProcessingArea, Shelf, BoxDimensions, Material, isValidShelf } from '../store/calculator';
 import { boxCoordinates } from '../store/boxCoordinates';
@@ -123,7 +125,7 @@ import {
 	calculatePossibleUserBoxDimensions,
 	updatBoxDimensions,
 } from '../store/box';
-import { calculateGrid, resetGrid, initGridDragged, initGridResize } from '../store/boxGrid';
+import { calculateGrid, resetGrid } from '../store/boxGrid';
 import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../store/svg';
 
 import GridStack from 'gridstack/dist/gridstack-h5.js';
@@ -131,56 +133,56 @@ import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/gridstack-extra.css';
 import { GridStackOptions } from 'gridstack';
 
-function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: Ref<BoxDimensions>): Box[] {
+function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: BoxDimensions): Box[] {
 	return reactive<Array<Box>>([
 		reactive(
 			createTestBox(
 				shelf,
-				possibleUserBoxDimensions.value,
+				possibleUserBoxDimensions,
 				0,
-				possibleUserBoxDimensions.value.heights.length,
-				possibleUserBoxDimensions.value.heights[0],
-				possibleUserBoxDimensions.value.widths[1],
+				possibleUserBoxDimensions.heights.length,
+				possibleUserBoxDimensions.heights[0],
+				possibleUserBoxDimensions.widths[1],
 			),
 		),
 		reactive(
 			createTestBox(
 				shelf,
-				possibleUserBoxDimensions.value,
+				possibleUserBoxDimensions,
 				2,
-				possibleUserBoxDimensions.value.heights.length,
-				possibleUserBoxDimensions.value.heights[0],
-				possibleUserBoxDimensions.value.widths[1],
+				possibleUserBoxDimensions.heights.length,
+				possibleUserBoxDimensions.heights[0],
+				possibleUserBoxDimensions.widths[1],
 			),
 		),
 		reactive(
 			createTestBox(
 				shelf,
-				possibleUserBoxDimensions.value,
+				possibleUserBoxDimensions,
 				1,
-				possibleUserBoxDimensions.value.heights.length,
-				possibleUserBoxDimensions.value.heights[1],
-				possibleUserBoxDimensions.value.widths[1],
+				possibleUserBoxDimensions.heights.length,
+				possibleUserBoxDimensions.heights[1],
+				possibleUserBoxDimensions.widths[1],
 			),
 		),
 		reactive(
 			createTestBox(
 				shelf,
-				possibleUserBoxDimensions.value,
+				possibleUserBoxDimensions,
 				4,
-				possibleUserBoxDimensions.value.heights.length,
-				possibleUserBoxDimensions.value.heights[2],
-				possibleUserBoxDimensions.value.widths[0],
+				possibleUserBoxDimensions.heights.length,
+				possibleUserBoxDimensions.heights[2],
+				possibleUserBoxDimensions.widths[0],
 			),
 		),
 		reactive(
 			createTestBox(
 				shelf,
-				possibleUserBoxDimensions.value,
-				possibleUserBoxDimensions.value.widths.length,
-				possibleUserBoxDimensions.value.heights.length,
-				possibleUserBoxDimensions.value.heights[0],
-				possibleUserBoxDimensions.value.widths[3],
+				possibleUserBoxDimensions,
+				possibleUserBoxDimensions.widths.length,
+				possibleUserBoxDimensions.heights.length,
+				possibleUserBoxDimensions.heights[0],
+				possibleUserBoxDimensions.widths[3],
 			),
 		),
 	]);
@@ -293,6 +295,13 @@ export default {
 			shelf.depth = testShelf.depth;
 		}
 
+		function fillTestBoxes(): void {
+			if(possibleUserBoxDimensions.value.heights.length > 0) {
+				const testBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions.value));
+				testBoxes.forEach((box) => userBoxes.push(box));
+			}
+		}
+
 		return {
 			shelf,
 			basicBox,
@@ -311,6 +320,7 @@ export default {
 			getSVG,
 			createBoxToArray,
 			fillTestData,
+			fillTestBoxes,
 		};
 	},
 };
