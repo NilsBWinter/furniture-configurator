@@ -34,16 +34,15 @@ export function downloadBoxSVG(box: Box, material: Material): void {
 	const mTchickness = material.thickness ? material.thickness : 0;
 
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
-		strokeWidth: '0.1',
+		// strokeWidth: '0.1',
 		units: 'mm',
 	};
 	const svgOptionsGround: makerjs.exporter.ISVGRenderOptions = {
-		strokeWidth: '0.1',
-		origin: [0, box.width * 2],
+		// strokeWidth: '0.1',
 		units: 'mm',
 	}
 	const svgOptionsConnector: makerjs.exporter.ISVGRenderOptions = {
-		strokeWidth: '0.1',
+		// strokeWidth: '0.1',
 		origin: [0, mTchickness * 8],
 		units: 'mm',
 	}
