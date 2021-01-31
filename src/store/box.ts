@@ -25,7 +25,7 @@ export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 		height: boxDimensions.heights[0],
 		width: boxDimensions.widths[0],
 		depth: shelf.depth ? shelf.depth : 0,
-
+		
 		possibleBoxDimensions: boxDimensions,
 
 		id: getRandomInt(1, 9999),
@@ -131,7 +131,6 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
 		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);
 	});
-	// debugger;
 
 	if (!isValidLongDepth(shelf, processingArea, depth))
 		return {
@@ -179,20 +178,6 @@ export function updatBoxDimensions(box: Box, newBoxDimesnions: BoxDimensions): v
 
 export function boxDimensionValid(box: Box, boxDimensions: BoxDimensions): boolean {
 	return boxDimensions.heights.includes(box.height) && boxDimensions.widths.includes(box.width);
-}
-
-export function initGridDragged(grid: GridStack, userBoxes: Box[]): void {
-	grid.on("dragstop", (event, element) => {
-		const node = element.gridstackNode;
-		updateBoxGridPosition(userBoxes, node);
-	});
-}
-
-export function initGridResize(grid: GridStack, userBoxes: Box[]): void {
-	grid.on("resizestop", (event, element) => {
-		const node = element.gridstackNode;
-		updateBoxSize(userBoxes, node);
-	});
 }
 
 export function updateBoxGridPosition(boxes: Box[], changedBox: Box) {

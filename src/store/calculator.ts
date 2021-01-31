@@ -2,7 +2,7 @@
  * Interface for the Material to be processed
  */
 export interface Material {
-	type: string;
+	type?: string;
 	thickness?: number;
 }
 
@@ -98,6 +98,10 @@ export interface BoxDimensions {
 	heights: number[];
 	widths: number[];
 	depth: number;
+}
+
+export function isValidShelf(shelf: Shelf, processingArea): boolean {
+	return typeof shelf.height === 'number' && typeof shelf.width === 'number' && typeof shelf.depth === 'number' && shelf.depth <= processingArea.longSide;
 }
 
 export function isValidLongHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {

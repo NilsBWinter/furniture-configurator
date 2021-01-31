@@ -2,6 +2,7 @@
 	<div>
 		<h1>Basic Settings</h1>
 
+        <!-- Button to fill in Testdata -->
         <o-button @click="fillTestData">Fill with Example Data</o-button>
 
 		<div class="box-container">
@@ -87,7 +88,7 @@ export default {
 	},
 
 	setup(props, context) {
-		const tolerance = ref(0);
+		const tolerance = ref();
 
 		const processingAreaRef = reactive<ProcessingArea>(props.processingArea);
 

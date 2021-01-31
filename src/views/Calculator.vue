@@ -15,16 +15,21 @@ import BoxSystem from './BoxSystem.vue'
 import { Material, ProcessingArea } from '@/store/calculator';
 
 export default {
+    components: {
+        BasicSettings,
+        BoxSystem
+    },
+    
     setup(){
 
         let material = reactive<Material>({
-            thickness: 0,
-            type:"",
+            thickness: undefined,
+            type: undefined,
         });
 
         let processingArea = reactive<ProcessingArea>({
-            longSide: 0,
-            shortSide: 0,
+            longSide: undefined,
+            shortSide: undefined,
         });
 
         function updateMaterial(m: Material): void {
@@ -43,10 +48,6 @@ export default {
             updateMaterial,
             updateProcessingArea,
         }
-    },
-    components: {
-        BasicSettings,
-        BoxSystem
     },
 }
 </script>

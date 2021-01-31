@@ -1,6 +1,7 @@
 import { Shelf, Box } from './calculator';
 import GridStack from 'gridstack/dist/gridstack-h5.js';
-import { GridStackOptions } from 'gridstack';
+import { GridItemHTMLElement, GridStackOptions } from 'gridstack';
+import { updateBoxGridPosition, updateBoxSize } from './box';
 
 export function createGridColumnsCSS(columns: number): void {
     const style = document.createElement('style');
@@ -21,7 +22,7 @@ export function addBoxCSS(box: Box): void {
     if (box.backSide) element.classList.add('box--backside');
 }
 
-export function resetGrid(gridParentElementId: string, grid: GridStack): void {
+export function resetGrid(gridParentElementId: string): void {
     const gridParentElement = document.getElementById(gridParentElementId);
 
     const gridElement = document.createElement('div');
@@ -42,13 +43,29 @@ export function calculateGrid(gridOptions: GridStackOptions, shelf: Shelf, basic
     const gridElement = document.getElementsByClassName('grid-stack')[0];
     const grid = GridStack.init(gridOptions);
 
-    grid.removeAll();
+    initGridDragged(grid, userBoxes);
+    initGridResize(grid, userBoxes);
 
+    grid.removeAll();
     if(columns > 12) createGridColumnsCSS(columns);
     else gridElement.classList.add(`grid-stack-${columns}`);
 	userBoxes.forEach((box) => {
         grid.addWidget(box);
         addBoxCSS(box);
 	});
+}
 
+export function initGridDragged(grid: GridStack, userBoxes: Box[]): void {
+	grid.on("dragstop", (event: Event, element: GridItemHTMLElement) => {
+		const node = element.gridstackNode as Box;
+        console.log('dragged');
+		updateBoxGridPosition(userBoxes, node);
+	});
+}
+
+export function initGridResize(grid: GridStack, userBoxes: Box[]): void {
+	grid.on("resizestop", (event: Event, element: GridItemHTMLElement) => {
+		const node = element.gridstackNode as Box;
+		updateBoxSize(userBoxes, node);
+	});
 }
