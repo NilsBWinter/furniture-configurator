@@ -1,40 +1,42 @@
 <template>
-    <div>
-        <h1>Basic Settings</h1>
+	<div>
+		<h1>Basic Settings</h1>
 
-        <div class="box-container">
-            <h2>Enter the maximum possible processing area of your device</h2>
+        <o-button @click="fillTestData">Fill with Example Data</o-button>
 
-            <o-field label="Longer Side in mm:">
-                <o-input type="number" v-model.number="processingArea.longSide" rounded />
-            </o-field>
+		<div class="box-container">
+			<h2>Enter the maximum possible processing area of your device</h2>
 
-            <o-field label="Shorter Side in mm:">
-                <o-input type="number" v-model.number="processingArea.shortSide" rounded />
-            </o-field>
-        </div>
+			<o-field label="Longer Side in mm:">
+				<o-input type="number" v-model.number="processingAreaRef.longSide" rounded />
+			</o-field>
 
-        <div class="box-container">
-            <h2>Enter the your Material</h2>
+			<o-field label="Shorter Side in mm:">
+				<o-input type="number" v-model.number="processingAreaRef.shortSide" rounded />
+			</o-field>
+		</div>
 
-            <o-field label="Type:">
-                <o-input type="text" v-model="material.type" rounded />
-            </o-field>
+		<div class="box-container">
+			<h2>Enter the your Material</h2>
 
-            <o-field label="Thickness in mm:">
-                <o-input type="number" v-model.number="material.thickness" rounded />
-            </o-field>
-        </div>
+			<o-field label="Type:">
+				<o-input type="text" v-model="materialRef.type" rounded />
+			</o-field>
 
-        <div class="box-container">
-            <h2>Enter the tolerance of your device and material</h2>
+			<o-field label="Thickness in mm:">
+				<o-input type="number" v-model.number="materialRef.thickness" rounded />
+			</o-field>
+		</div>
 
-            <o-field label="Tolerance in mm:">
-                <o-input type="number" v-model.number="tolerance" rounded />
-            </o-field>
-        </div>
+		<div class="box-container">
+			<h2>Enter the tolerance of your device and material</h2>
 
-        <!-- <div> Future Code
+			<o-field label="Tolerance in mm:">
+				<o-input type="number" v-model.number="tolerance" rounded />
+			</o-field>
+		</div>
+
+		<!-- <div> Future Code
             <h2>Select the type of your shelf</h2>
 
             <div>
@@ -44,57 +46,80 @@
             </div>
         </div> -->
 
-
-        <!-- <div>
+		<!-- <div>
             <h2>your Settings</h2>
             <p> Processing Area: {{ processingArea.longSide}}mm * {{ processingArea.shortSide}}mm</p>
             <p> Material: {{material.type}} , {{material.thickness}}</p>
             <p> Tolerance: {{tolerance}}mm</p>
         </div> -->
-    </div>
-
+	</div>
 </template>
 
 <script lang="ts">
-import {computed, reactive, ref, watch} from 'vue';
+import { reactive, ref, watch } from 'vue';
 
-import {Material, ProcessingArea} from '../store/calculator';
+import { Material, ProcessingArea } from '../store/calculator';
+
+const testProcessingArea = reactive({
+	longSide: 3000,
+	shortSide: 2000,
+});
+
+const testMaterial = reactive({
+	thickness: 20,
+	type: 'wood',
+});
 
 export default {
-    name:"BasicSettings",
+	name: 'BasicSettings',
 
-    emits: ['update:material', 'update:processingArea'],
+	emits: ['update:material', 'update:processingArea'],
 
-    setup(props, context){
+	props: {
+		processingArea: {
+			type: Object as () => ProcessingArea,
+			required: true,
+		},
+		material: {
+			type: Object as () => Material,
+			required: true,
+		},
+	},
 
-        const tolerance = ref(0);
+	setup(props, context) {
+		const tolerance = ref(0);
 
-        const processingArea = reactive<ProcessingArea> ({        });
+		const processingAreaRef = reactive<ProcessingArea>(props.processingArea);
 
-        const material = reactive<Material>({
-            type: "",
-            thickness: undefined,
-        })
+		const materialRef = reactive<Material>(props.material);
 
-        watch(processingArea, () => {
-				context.emit('update:processingArea', processingArea);
-        });
-
-        watch(material, () => {
-				context.emit('update:material', material);
+		watch(processingAreaRef, () => {
+			context.emit('update:processingArea', processingAreaRef);
 		});
 
+		watch(materialRef, () => {
+			context.emit('update:material', materialRef);
+		});
 
-        return {
-            processingArea,
-            material,
-            tolerance
-        }
-    },
+		// Fills in Testdata to show User possible Inputs
+		function fillTestData(): void {
+            processingAreaRef.longSide = testProcessingArea.longSide;
+            processingAreaRef.shortSide = testProcessingArea.shortSide;
+            materialRef.type = testMaterial.type;
+            materialRef.thickness = testMaterial.thickness;
+            tolerance.value = 3;
+		}
 
-}
+		return {
+			processingAreaRef,
+			materialRef,
+            tolerance,
+            
+            //Functions
+            fillTestData,
+		};
+	},
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

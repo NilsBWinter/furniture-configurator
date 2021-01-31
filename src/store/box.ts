@@ -131,7 +131,7 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
 		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);
 	});
-	debugger;
+	// debugger;
 
 	if (!isValidLongDepth(shelf, processingArea, depth))
 		return {
