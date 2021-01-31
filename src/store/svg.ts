@@ -1,4 +1,5 @@
 import makerjs from 'makerjs';
+import { unitType } from 'makerjs';
 
 import { Box, Material, Connector } from './calculator';
 import { Components } from './boxCoordinates';
@@ -30,21 +31,21 @@ export function getSVG(box: Box, material: Material, component: Components, svgO
  * @param box Box of the Components
  * @param material Material to be processed
  */
-export function downloadBoxSVG(box: Box, material: Material): void {
+export function downloadBoxSVG(box: Box, material: Material, unit: string): void {
 	const mTchickness = material.thickness ? material.thickness : 0;
 
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
 		// strokeWidth: '0.1',
-		units: 'mm',
+		units: unitType[unit],
 	};
 	const svgOptionsGround: makerjs.exporter.ISVGRenderOptions = {
 		// strokeWidth: '0.1',
-		units: 'mm',
+		units: unitType[unit],
 	}
 	const svgOptionsConnector: makerjs.exporter.ISVGRenderOptions = {
 		// strokeWidth: '0.1',
 		origin: [0, mTchickness * 8],
-		units: 'mm',
+		units: unitType[unit],
 	}
 	const downloadSVGs: DownloadSVG= {
 		left: getSVG(box, material, Components.leftSide, svgOptions),
@@ -81,6 +82,6 @@ export function downloadBoxSVG(box: Box, material: Material): void {
  * @param boxes
  * @param material
  */
-export function downloadBoxesSVG(boxes: Box[], material: Material) {
-	boxes.forEach(box => downloadBoxSVG(box, material));
+export function downloadBoxesSVG(boxes: Box[], material: Material, unit: string) {
+	boxes.forEach(box => downloadBoxSVG(box, material, unit));
 }

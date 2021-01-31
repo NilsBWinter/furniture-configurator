@@ -8,15 +8,15 @@
 		<div class="box-container">
 			<h2>Enter the dimensions of your shelf</h2>
 
-			<o-field label="Shelf Height in mm:">
+			<o-field :label="`Shelf Height in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="shelf.height" rounded />
 			</o-field>
 
-			<o-field label="Shelf Width in mm:">
+			<o-field :label="`Shelf Width in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="shelf.width" rounded />
 			</o-field>
 
-			<o-field label="Shelf Depth in mm:">
+			<o-field :label="`Shelf Depth in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="processingArea.longSide" />
 			</o-field>
 		</div>
@@ -34,7 +34,7 @@
 						{{ index + 1 }}
 					</option>
 				</o-select>
-				corresponds to a height of {{ basicBox.height }} mm
+				corresponds to a height of {{ basicBox.height }} {{unitType[unit]}}
 			</o-field>
 
 			<o-field label="basicBoxWidth:">
@@ -43,7 +43,7 @@
 						{{ index + 1 }}
 					</option>
 				</o-select>
-				corresponds to a width of {{ basicBox.width }} mm
+				corresponds to a width of {{ basicBox.width }} {{unitType[unit]}}
 			</o-field>
 
 			<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
@@ -76,7 +76,7 @@
 								{{ index + 1 }}
 							</option>
 						</o-select>
-						corresponds to a height of {{ box.height }} mm
+						corresponds to a height of {{ box.height }} {{unitType[unit]}}
 					</o-field>
 
 					<o-field label="Box width:">
@@ -85,7 +85,7 @@
 								{{ index + 1 }}
 							</option>
 						</o-select>
-						corresponds to a width of {{ box.width }} mm
+						corresponds to a width of {{ box.width }} {{unitType[unit]}}
 					</o-field>
 				</div>
 
@@ -103,11 +103,11 @@
 					<o-checkbox v-model="box.backSide"> Backside </o-checkbox>
 				</div>
 
-				<o-button @click="downloadBoxSVG(box, materialRef)">Download SVGs of Box</o-button>
+				<o-button @click="downloadBoxSVG(box, materialRef, unit)">Download SVGs of Box</o-button>
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
-			<o-button @click="downloadBoxesSVG(userBoxes, material)">Download SVGs of all Boxes</o-button>
+			<o-button @click="downloadBoxesSVG(userBoxes, material, unit)">Download SVGs of all Boxes</o-button>
 		</div>
 	</div>
 </template>
@@ -132,6 +132,7 @@ import GridStack from 'gridstack/dist/gridstack-h5.js';
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/gridstack-extra.css';
 import { GridStackOptions } from 'gridstack';
+import { unitType } from 'makerjs';
 
 function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: BoxDimensions): Box[] {
 	return reactive<Array<Box>>([
@@ -218,6 +219,10 @@ export default {
 			type: Object as () => Material,
 			required: true,
 		},
+		unit: {
+            type: Object as () => typeof unitType,
+            default: 'Millimeter',
+        },
 	},
 
 	setup(props) {
@@ -314,6 +319,7 @@ export default {
 			materialRef,
 			invalidBoxes,
 			info,
+			unitType,
 
 			// Functions
 			createBox,

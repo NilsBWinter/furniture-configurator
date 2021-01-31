@@ -2,25 +2,36 @@
     <div>
         <h1>Calculator</h1>
 
-        <BasicSettings @update:material="updateMaterial" @update:processingArea="updateProcessingArea" :processingArea="processingArea" :material="material"></BasicSettings>
-        <BoxSystem :processingArea="processingArea" :material="material"></BoxSystem>
+        <o-field label="Unit:">
+            <o-select v-model="unit" rounded>
+                <option v-for="(u, index) in unitType" :key="index" :value="index">
+                    {{ index }}
+                </option>
+            </o-select>
+        </o-field>
+
+        <BasicSettings @update:material="updateMaterial" @update:processingArea="updateProcessingArea" :processingArea="processingArea" :material="material" :unit="unit"></BasicSettings>
+        <BoxSystem :processingArea="processingArea" :material="material" :unit="unit"></BoxSystem>
 
     </div>
 </template>
 
 <script lang="ts">
-import {reactive} from 'vue';
+import {reactive, ref} from 'vue';
 import BasicSettings from './BasicSettings.vue'
 import BoxSystem from './BoxSystem.vue'
-import { Material, ProcessingArea } from '@/store/calculator';
+import { Material, ProcessingArea} from '@/store/calculator';
+import { unitType } from 'makerjs';
 
 export default {
     components: {
         BasicSettings,
         BoxSystem
     },
-    
+
     setup(){
+
+        const unit = ref('Millimeter');
 
         let material = reactive<Material>({
             thickness: undefined,
@@ -43,6 +54,8 @@ export default {
         return {
             processingArea,
             material,
+            unit,
+            unitType,
 
             // Functions
             updateMaterial,

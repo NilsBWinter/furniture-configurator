@@ -8,11 +8,11 @@
 		<div class="box-container">
 			<h2>Enter the maximum possible processing area of your device</h2>
 
-			<o-field label="Longer Side in mm:">
+			<o-field :label="`Longer Side in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="processingAreaRef.longSide" rounded />
 			</o-field>
 
-			<o-field label="Shorter Side in mm:">
+			<o-field :label="`Shorter Side in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="processingAreaRef.shortSide" rounded />
 			</o-field>
 		</div>
@@ -24,7 +24,7 @@
 				<o-input type="text" v-model="materialRef.type" rounded />
 			</o-field>
 
-			<o-field label="Thickness in mm:">
+			<o-field :label="`Thickness in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="materialRef.thickness" rounded />
 			</o-field>
 		</div>
@@ -32,7 +32,7 @@
 		<div class="box-container">
 			<h2>Enter the tolerance of your device and material</h2>
 
-			<o-field label="Tolerance in mm:">
+			<o-field :label="`Tolerance in ${unitType[unit]}:`">
 				<o-input type="number" v-model.number="tolerance" rounded />
 			</o-field>
 		</div>
@@ -61,6 +61,8 @@ import { reactive, ref, watch } from 'vue';
 
 import { Material, ProcessingArea } from '../store/calculator';
 
+import { unitType } from 'makerjs';
+
 const testProcessingArea = reactive({
 	longSide: 3000,
 	shortSide: 2000,
@@ -84,7 +86,11 @@ export default {
 		material: {
 			type: Object as () => Material,
 			required: true,
-		},
+        },
+        unit: {
+            type: Object as () => typeof unitType,
+            default: 'Millimeter',
+        },
 	},
 
 	setup(props, context) {
@@ -115,6 +121,7 @@ export default {
 			processingAreaRef,
 			materialRef,
             tolerance,
+            unitType,
             
             //Functions
             fillTestData,
