@@ -9,11 +9,11 @@
 			<h2>Enter the maximum possible processing area of your device</h2>
 
 			<o-field :label="`Longer Side in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="processingAreaRef.longSide" rounded />
+				<o-input type="number" v-model.number="machineRef.processingArea.longSide" rounded />
 			</o-field>
 
 			<o-field :label="`Shorter Side in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="processingAreaRef.shortSide" rounded />
+				<o-input type="number" v-model.number="machineRef.processingArea.shortSide" rounded />
 			</o-field>
 		</div>
 
@@ -30,10 +30,10 @@
 		</div>
 
 		<div class="box-container">
-			<h2>Enter the tolerance of your device and material</h2>
+			<h2>Enter the tolerance of your device</h2>
 
 			<o-field :label="`Tolerance in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="tolerance" rounded />
+				<o-input type="number" v-model.number="machineRef.tolerance" rounded />
 			</o-field>
 		</div>
 
@@ -59,7 +59,7 @@
 <script lang="ts">
 import { reactive, ref, watch } from 'vue';
 
-import { Material, ProcessingArea } from '../store/calculator';
+import { Machine, Material } from '../store/calculator';
 
 import { unitType } from 'makerjs';
 
@@ -76,11 +76,11 @@ const testMaterial = reactive({
 export default {
 	name: 'BasicSettings',
 
-	emits: ['update:material', 'update:processingArea'],
+	emits: ['update:material', 'update:machine'],
 
 	props: {
-		processingArea: {
-			type: Object as () => ProcessingArea,
+		machine: {
+			type: Object as () => Machine,
 			required: true,
 		},
 		material: {
@@ -96,12 +96,12 @@ export default {
 	setup(props, context) {
 		const tolerance = ref();
 
-		const processingAreaRef = reactive<ProcessingArea>(props.processingArea);
+		const machineRef = reactive<Machine>(props.machine);
 
 		const materialRef = reactive<Material>(props.material);
 
-		watch(processingAreaRef, () => {
-			context.emit('update:processingArea', processingAreaRef);
+		watch(machineRef, () => {
+			context.emit('update:machine', machineRef);
 		});
 
 		watch(materialRef, () => {
@@ -110,18 +110,18 @@ export default {
 
 		// Fills in Testdata to show User possible Inputs
 		function fillTestData(): void {
-            processingAreaRef.longSide = testProcessingArea.longSide;
-            processingAreaRef.shortSide = testProcessingArea.shortSide;
+            machineRef.processingArea.longSide = testProcessingArea.longSide;
+            machineRef.processingArea.shortSide = testProcessingArea.shortSide;
             materialRef.type = testMaterial.type;
             materialRef.thickness = testMaterial.thickness;
             tolerance.value = 3;
 		}
 
 		return {
-			processingAreaRef,
 			materialRef,
             tolerance,
-            unitType,
+			unitType,
+			machineRef,
             
             //Functions
             fillTestData,

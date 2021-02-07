@@ -17,7 +17,7 @@
 			</o-field>
 
 			<o-field :label="`Shelf Depth in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="processingArea.longSide" />
+				<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="machine.processingArea.longSide" />
 			</o-field>
 		</div>
 
@@ -115,7 +115,7 @@
 <script lang="ts">
 import { computed, ComputedRef, onMounted, reactive, ref, watch } from 'vue';
 
-import { Box, ProcessingArea, Shelf, BoxDimensions, Material, isValidShelf } from '../store/calculator';
+import { Box, Shelf, BoxDimensions, Material, isValidShelf, Machine } from '../store/calculator';
 import { boxCoordinates } from '../store/boxCoordinates';
 import {
 	createTestBox,
@@ -211,8 +211,8 @@ export default {
 	name: 'BoxSystem',
 
 	props: {
-		processingArea: {
-			type: Object as () => ProcessingArea,
+		machine: {
+			type: Object as () => Machine,
 			required: true,
 		},
 		material: {
@@ -231,6 +231,8 @@ export default {
 
 		const materialRef = ref<Material>(props.material);
 
+		const machine = reactive<Machine>(props.machine);
+
 		let mounted = false;
 
 		const shelf = reactive<Shelf>({});
@@ -238,13 +240,13 @@ export default {
 		const userBoxes = reactive<Box[]>([]);
 
 		const possibleBasicBoxDimensions = computed(
-			(): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, props.processingArea, basicBoxSteps),
+			(): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, machine.processingArea, basicBoxSteps),
 		);
 
 		const basicBox = reactive<Box>(createBox(shelf, possibleBasicBoxDimensions.value));
 
 		const possibleUserBoxDimensions: ComputedRef<BoxDimensions> = computed(
-			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, props.processingArea, basicBox, userBoxSteps),
+			(): BoxDimensions => calculatePossibleUserBoxDimensions(shelf, machine.processingArea, basicBox, userBoxSteps),
 		);
 
 		// const userBoxes = reactive<Box[]>(createTestBoxes(shelf, possibleUserBoxDimensions));
@@ -264,7 +266,7 @@ export default {
 		});
 
 		watch(shelf, () => {
-			if (isValidShelf(shelf, props.processingArea)) {
+			if (isValidShelf(shelf, machine.processingArea)) {
 				basicBox.possibleBoxDimensions = possibleBasicBoxDimensions.value;
 				basicBox.height = basicBox.possibleBoxDimensions.heights[0];
 				basicBox.width = basicBox.possibleBoxDimensions.widths[0];

@@ -1,4 +1,42 @@
 /**
+ * Enum holding types for different machines
+ */
+export enum machineTypes {
+	LASERCUTTER = 'LASERCUTTER',
+	CNC = 'CNC',
+}
+
+/**
+ * Interface for a machine
+ */
+export interface Machine {
+	name: string;
+	processingArea: ProcessingArea;
+	tolerance?: number;
+}
+
+/**
+ * A definition for a machine type
+ */
+export type MachineTypeDefinition = {
+	[k in machineTypes]: Machine
+}
+
+/**
+ * Const hollding the supported machine types
+ */
+export const machines: MachineTypeDefinition = {
+	[machineTypes.LASERCUTTER]: {
+		name: 'Lasercutter',
+		processingArea: {},
+	},
+	[machineTypes.CNC]: {
+		name: 'CNC',
+		processingArea: {},
+	},
+}
+
+/**
  * Interface for the Material to be processed
  */
 export interface Material {
