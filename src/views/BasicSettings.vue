@@ -17,6 +17,7 @@
 			</o-field>
 		</div>
 
+
 		<div class="box-container">
 			<h2>Enter the your Material</h2>
 
@@ -57,9 +58,9 @@
 </template>
 
 <script lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { reactive, watch } from 'vue';
 
-import { Machine, Material } from '../store/calculator';
+import { Material, machines, Machine} from '@/store/calculator';
 
 import { unitType } from 'makerjs';
 
@@ -81,7 +82,7 @@ export default {
 	props: {
 		machine: {
 			type: Object as () => Machine,
-			required: true,
+			default: true,
 		},
 		material: {
 			type: Object as () => Material,
@@ -94,13 +95,13 @@ export default {
 	},
 
 	setup(props, context) {
-		const tolerance = ref();
 
 		const machineRef = reactive<Machine>(props.machine);
 
 		const materialRef = reactive<Material>(props.material);
 
-		watch(machineRef, () => {
+		watch( machineRef, () => {
+			console.log('logged123');
 			context.emit('update:machine', machineRef);
 		});
 
@@ -112,16 +113,16 @@ export default {
 		function fillTestData(): void {
             machineRef.processingArea.longSide = testProcessingArea.longSide;
             machineRef.processingArea.shortSide = testProcessingArea.shortSide;
+            machineRef.tolerance = 3;
             materialRef.type = testMaterial.type;
             materialRef.thickness = testMaterial.thickness;
-            tolerance.value = 3;
 		}
 
 		return {
 			materialRef,
-            tolerance,
 			unitType,
 			machineRef,
+			machines,
             
             //Functions
             fillTestData,

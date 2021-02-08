@@ -1,4 +1,4 @@
-import makerjs, { IModel, IPath, IPathLine, IPathMap } from 'makerjs';
+import makerjs, { IModel, IPathLine, IPathMap } from 'makerjs';
 import { Box, Material, Connector, Machine, machines } from './calculator';
 
 /**
@@ -25,6 +25,8 @@ export type Coordinates = {
  * @param material Material of the Box
  */
 export function boxCoordinates(box: Box, material: Material, machine: Machine): Coordinates {
+
+	const dogboneRadius = machine.dogboneRadius ? machine.dogboneRadius : 0;
 
 	let boxHeight = box.height;
 	let boxWidth = box.width;
@@ -99,11 +101,11 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 				if (typeof topLine.paths === 'undefined') throw new Error('No path for topLine.paths');
 	
 				if ( i % 2 === 0) {
-					bottomLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(bottomLine.paths[`${i}.${i}`] as IPathLine, bottomLine.paths[`${i+1}`] as IPathLine, 1);
-					topLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(topLine.paths[`${i}`] as IPathLine, topLine.paths[`${i}.${i}`] as IPathLine, 1);
+					bottomLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(bottomLine.paths[`${i}.${i}`] as IPathLine, bottomLine.paths[`${i+1}`] as IPathLine, dogboneRadius);
+					topLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(topLine.paths[`${i}`] as IPathLine, topLine.paths[`${i}.${i}`] as IPathLine, dogboneRadius);
 				} else {
-					bottomLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(bottomLine.paths[`${i}`] as IPathLine, bottomLine.paths[`${i}.${i}`] as IPathLine, 1);
-					topLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(topLine.paths[`${i}.${i}`] as IPathLine, topLine.paths[`${i+1}`] as IPathLine, 1);
+					bottomLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(bottomLine.paths[`${i}`] as IPathLine, bottomLine.paths[`${i}.${i}`] as IPathLine, dogboneRadius);
+					topLineDogbone.paths[`dogbone-${i}`] = makerjs.path.dogbone(topLine.paths[`${i}.${i}`] as IPathLine, topLine.paths[`${i+1}`] as IPathLine, dogboneRadius);
 				}
 			}
 	
@@ -134,11 +136,11 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 			
 			// if machine is from type CNC (future: if a machine needs dogbones) 
 			if (machine.name === machines.CNC.name) {
-				bottomLeft = new makerjs.models.Dogbone(width, height, 1);
-				bottomRight = new makerjs.models.Dogbone(width, height, 1);
-				bottomMid = new makerjs.models.Dogbone(width, height, 1);
-				topLeft = new makerjs.models.Dogbone(width, height, 1);
-				topRight = new makerjs.models.Dogbone(width, height, 1);
+				bottomLeft = new makerjs.models.Dogbone(width, height, dogboneRadius);
+				bottomRight = new makerjs.models.Dogbone(width, height, dogboneRadius);
+				bottomMid = new makerjs.models.Dogbone(width, height, dogboneRadius);
+				topLeft = new makerjs.models.Dogbone(width, height, dogboneRadius);
+				topRight = new makerjs.models.Dogbone(width, height, dogboneRadius);
 			} else {
 				// normal Rectangles e.g for lasercutting
 				bottomLeft = new makerjs.models.Rectangle(width, height);
@@ -190,8 +192,8 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 
 			// if machine is from type CNC (future: if a machine needs dogbones) 
 			if (machine.name === machines.CNC.name) {
-				top = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, 1);
-				bottom = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, 1);
+				top = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, dogboneRadius);
+				bottom = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, dogboneRadius);
 				
 			} else {
 				// normal Rectangles e.g for lasercutting
@@ -276,15 +278,15 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 		if (machine.name === machines.CNC.name) {
 
 			const connedctorDogBones: IPathMap = {
-				dogboneRight1: makerjs.path.dogbone(connectorPaths.right2 as IPathLine, connectorPaths.right3 as IPathLine, 1),
-				dogboneRight2: makerjs.path.dogbone(connectorPaths.right3 as IPathLine, connectorPaths.right4 as IPathLine, 1),
-				dogboneRight3: makerjs.path.dogbone(connectorPaths.right6 as IPathLine, connectorPaths.right7 as IPathLine, 1),
-				dogboneRight4: makerjs.path.dogbone(connectorPaths.right7 as IPathLine, connectorPaths.right8 as IPathLine, 1),
+				dogboneRight1: makerjs.path.dogbone(connectorPaths.right2 as IPathLine, connectorPaths.right3 as IPathLine, dogboneRadius),
+				dogboneRight2: makerjs.path.dogbone(connectorPaths.right3 as IPathLine, connectorPaths.right4 as IPathLine, dogboneRadius),
+				dogboneRight3: makerjs.path.dogbone(connectorPaths.right6 as IPathLine, connectorPaths.right7 as IPathLine, dogboneRadius),
+				dogboneRight4: makerjs.path.dogbone(connectorPaths.right7 as IPathLine, connectorPaths.right8 as IPathLine, dogboneRadius),
 	
-				dogboneLeft1: makerjs.path.dogbone(connectorPaths.left2 as IPathLine, connectorPaths.left3 as IPathLine, 1),
-				dogboneLeft2: makerjs.path.dogbone(connectorPaths.left3 as IPathLine, connectorPaths.left4 as IPathLine, 1),
-				dogboneLeft3: makerjs.path.dogbone(connectorPaths.left6 as IPathLine, connectorPaths.left7 as IPathLine, 1),
-				dogboneLeft4: makerjs.path.dogbone(connectorPaths.left7 as IPathLine, connectorPaths.left8 as IPathLine, 1),
+				dogboneLeft1: makerjs.path.dogbone(connectorPaths.left2 as IPathLine, connectorPaths.left3 as IPathLine, dogboneRadius),
+				dogboneLeft2: makerjs.path.dogbone(connectorPaths.left3 as IPathLine, connectorPaths.left4 as IPathLine, dogboneRadius),
+				dogboneLeft3: makerjs.path.dogbone(connectorPaths.left6 as IPathLine, connectorPaths.left7 as IPathLine, dogboneRadius),
+				dogboneLeft4: makerjs.path.dogbone(connectorPaths.left7 as IPathLine, connectorPaths.left8 as IPathLine, dogboneRadius),
 				
 			}
 
@@ -350,17 +352,17 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 		if (machine.name === machines.CNC.name) {
 
 			const leftLineDogBones: IPathMap = {
-				dogboneLeft1: makerjs.path.dogbone(leftLine.left1 as IPathLine, leftLine.left2 as IPathLine, 1),
-				dogboneLeft2: makerjs.path.dogbone(leftLine.left4 as IPathLine, leftLine.left5 as IPathLine, 1),
-				dogboneLeft3: makerjs.path.dogbone(leftLine.left5 as IPathLine, leftLine.left6 as IPathLine, 1),
-				dogboneLeft4: makerjs.path.dogbone(leftLine.left8 as IPathLine, leftLine.left9 as IPathLine, 1),
+				dogboneLeft1: makerjs.path.dogbone(leftLine.left1 as IPathLine, leftLine.left2 as IPathLine, dogboneRadius),
+				dogboneLeft2: makerjs.path.dogbone(leftLine.left4 as IPathLine, leftLine.left5 as IPathLine, dogboneRadius),
+				dogboneLeft3: makerjs.path.dogbone(leftLine.left5 as IPathLine, leftLine.left6 as IPathLine, dogboneRadius),
+				dogboneLeft4: makerjs.path.dogbone(leftLine.left8 as IPathLine, leftLine.left9 as IPathLine, dogboneRadius),
 			}
 
 			const rightLineDogBones: IPathMap = {
-				dogboneRight1: makerjs.path.dogbone(rightLine.right1 as IPathLine, rightLine.right2 as IPathLine, 1),
-				dogboneRight2: makerjs.path.dogbone(rightLine.right4 as IPathLine, rightLine.right5 as IPathLine, 1),
-				dogboneRight3: makerjs.path.dogbone(rightLine.right5 as IPathLine, rightLine.right6 as IPathLine, 1),
-				dogboneRight4: makerjs.path.dogbone(rightLine.right8 as IPathLine, rightLine.right9 as IPathLine, 1),
+				dogboneRight1: makerjs.path.dogbone(rightLine.right1 as IPathLine, rightLine.right2 as IPathLine, dogboneRadius),
+				dogboneRight2: makerjs.path.dogbone(rightLine.right4 as IPathLine, rightLine.right5 as IPathLine, dogboneRadius),
+				dogboneRight3: makerjs.path.dogbone(rightLine.right5 as IPathLine, rightLine.right6 as IPathLine, dogboneRadius),
+				dogboneRight4: makerjs.path.dogbone(rightLine.right8 as IPathLine, rightLine.right9 as IPathLine, dogboneRadius),
 			}
 
 			leftLine = {...leftLine, ...leftLineDogBones};
@@ -375,9 +377,9 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 		
 		// if machine is from type CNC (future: if a machine needs dogbones) 
 		if (machine.name === machines.CNC.name) {
-			slotLeft = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, 1);
-			slotRight = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, 1);
-			slotBack = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, 1);
+			slotLeft = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, dogboneRadius);
+			slotRight = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, dogboneRadius);
+			slotBack = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, dogboneRadius);
 		} else {
 			// normal Rectangles e.g for lasercutting
 			slotLeft = new makerjs.models.Rectangle(connectorTenonLength, connectorTenonWidth / 2);
@@ -477,27 +479,27 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 		// if machine is from type CNC (future: if a machine needs dogbones) 
 		if (machine.name === machines.CNC.name) {
 			const dogBonesLeft: IPathMap = {
-				dogboneLeft1: makerjs.path.dogbone(left.left1 as IPathLine, left.left2 as IPathLine, 1),
-				dogboneLeft2: makerjs.path.dogbone(left.left4 as IPathLine, left.left5 as IPathLine, 1),
-				dogboneLeft3: makerjs.path.dogbone(left.left5 as IPathLine, left.left6 as IPathLine, 1),
-				dogboneLeft4: makerjs.path.dogbone(left.left8 as IPathLine, left.left9 as IPathLine, 1),
+				dogboneLeft1: makerjs.path.dogbone(left.left1 as IPathLine, left.left2 as IPathLine, dogboneRadius),
+				dogboneLeft2: makerjs.path.dogbone(left.left4 as IPathLine, left.left5 as IPathLine, dogboneRadius),
+				dogboneLeft3: makerjs.path.dogbone(left.left5 as IPathLine, left.left6 as IPathLine, dogboneRadius),
+				dogboneLeft4: makerjs.path.dogbone(left.left8 as IPathLine, left.left9 as IPathLine, dogboneRadius),
 			}
 
 			const dogBonesRight: IPathMap = {
-				dogboneRight1: makerjs.path.dogbone(right.right1 as IPathLine, right.right2 as IPathLine, 1),
-				dogboneRight2: makerjs.path.dogbone(right.right4 as IPathLine, right.right5 as IPathLine, 1),
-				dogboneRight3: makerjs.path.dogbone(right.right5 as IPathLine, right.right6 as IPathLine, 1),
-				dogboneRight4: makerjs.path.dogbone(right.right8 as IPathLine, right.right9 as IPathLine, 1),
+				dogboneRight1: makerjs.path.dogbone(right.right1 as IPathLine, right.right2 as IPathLine, dogboneRadius),
+				dogboneRight2: makerjs.path.dogbone(right.right4 as IPathLine, right.right5 as IPathLine, dogboneRadius),
+				dogboneRight3: makerjs.path.dogbone(right.right5 as IPathLine, right.right6 as IPathLine, dogboneRadius),
+				dogboneRight4: makerjs.path.dogbone(right.right8 as IPathLine, right.right9 as IPathLine, dogboneRadius),
 			}
 
 			const dogBonesTop: IPathMap = {
-				dogboneTop1: makerjs.path.dogbone(top.top1 as IPathLine, top.top2 as IPathLine, 1),
-				dogboneTop2: makerjs.path.dogbone(top.top3 as IPathLine, top.top4 as IPathLine, 1),
+				dogboneTop1: makerjs.path.dogbone(top.top1 as IPathLine, top.top2 as IPathLine, dogboneRadius),
+				dogboneTop2: makerjs.path.dogbone(top.top3 as IPathLine, top.top4 as IPathLine, dogboneRadius),
 			}
 
 			const dogBonesBottom: IPathMap = {
-				dogboneBottom1: makerjs.path.dogbone(bottom.bottom1 as IPathLine, bottom.bottom2 as IPathLine, 1),
-				dogboneBottom2: makerjs.path.dogbone(bottom.bottom3 as IPathLine, bottom.bottom4 as IPathLine, 1),
+				dogboneBottom1: makerjs.path.dogbone(bottom.bottom1 as IPathLine, bottom.bottom2 as IPathLine, dogboneRadius),
+				dogboneBottom2: makerjs.path.dogbone(bottom.bottom3 as IPathLine, bottom.bottom4 as IPathLine, dogboneRadius),
 			}
 
 			boxBack.paths = { ...boxBack.paths, ...dogBonesLeft, ...dogBonesRight, ...dogBonesTop, ...dogBonesBottom};

@@ -13,6 +13,7 @@ export interface Machine {
 	name: string;
 	processingArea: ProcessingArea;
 	tolerance?: number;
+	dogboneRadius?: number;
 }
 
 /**
@@ -33,6 +34,7 @@ export const machines: MachineTypeDefinition = {
 	[machineTypes.CNC]: {
 		name: 'CNC',
 		processingArea: {},
+		dogboneRadius: 1,
 	},
 }
 
