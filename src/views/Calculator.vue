@@ -11,8 +11,8 @@
         </o-field>
         <o-field label="Machinetype:">
             <o-select v-model="machine">
-                <option v-for="(machine, index) in machines" :key="index" :value="machine">
-                    {{ machine.name }}
+                <option v-for="(m, index) in machines" :key="index" :value="m">
+                    {{ m.name }}
                 </option>
             </o-select>
         </o-field>
@@ -40,7 +40,7 @@ export default {
 
         const unit = ref('Millimeter');
 
-        let machine = reactive<Machine>(machines.LASERCUTTER);
+        const machine = ref<Machine>(machines.LASERCUTTER);
 
         let material = reactive<Material>({
             thickness: undefined,
@@ -57,7 +57,9 @@ export default {
         }
 
         function updateMachine(m: Machine): void {
-            machine = m;
+            machine.value.name = m.name;
+            machine.value.processingArea = m.processingArea;
+            machine.value.tolerance = m.tolerance;
         }
 
         return {

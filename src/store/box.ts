@@ -10,6 +10,7 @@ import {
 	isValidShortHeight,
 	isValidShortWidth,
 	isValidLongDepth,
+	Machine,
 } from './calculator';
 
 /**
@@ -109,7 +110,7 @@ export function createBoxToArray(boxes: Box[], shelf: Shelf, possibleBoxDimensio
  * @param processingArea The maximum processable Area that can be processed
  * @param rangeSteps number of possible Size Variants for the Box Dimensions
  */
-export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea: ProcessingArea, rangeSteps: number[]): BoxDimensions {
+export function calculatePossibleBasicBoxDimensions(shelf: Shelf, machine: Machine, rangeSteps: number[]): BoxDimensions {
 	const longHeights: number[] = [];
 	const longWidths: number[] = [];
 
@@ -123,14 +124,14 @@ export function calculatePossibleBasicBoxDimensions(shelf: Shelf, processingArea
 	rangeSteps.forEach((step) => {
 		const height = shelfHeight / step;
 		const width = shelfWidth / step;
-		if (isValidLongHeight(shelf, processingArea, height)) longHeights.push(height);
-		if (isValidLongWidth(shelf, processingArea, width)) longWidths.push(width);
+		if (isValidLongHeight(shelf, machine, height)) longHeights.push(height);
+		if (isValidLongWidth(shelf, machine, width)) longWidths.push(width);
 
-		if (isValidShortHeight(shelf, processingArea, height)) shortHeights.push(height);
-		if (isValidShortWidth(shelf, processingArea, width)) shortWidths.push(width);
+		if (isValidShortHeight(shelf, machine, height)) shortHeights.push(height);
+		if (isValidShortWidth(shelf, machine, width)) shortWidths.push(width);
 	});
 
-	if (!isValidLongDepth(shelf, processingArea, depth))
+	if (!isValidLongDepth(shelf, machine, depth))
 		return {
 			heights: longHeights.sort((a, b) => a - b),
 			widths: longWidths.sort((a, b) => a - b),

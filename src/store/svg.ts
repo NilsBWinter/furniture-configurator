@@ -1,7 +1,7 @@
 import makerjs from 'makerjs';
 import { unitType } from 'makerjs';
 
-import { Box, Material, Connector } from './calculator';
+import { Box, Material, Connector, Machine } from './calculator';
 import { Components } from './boxCoordinates';
 import { boxCoordinates } from '../store/boxCoordinates';
 
@@ -21,8 +21,8 @@ export interface DownloadSVG {
  * @param component component(Side) that should be given back as an SVG as a String
  * @param svgOptions Optional render Options of the SVG see maker.js Docu
  */
-export function getSVG(box: Box, material: Material, component: Components, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
-	return makerjs.exporter.toSVG(boxCoordinates(box, material)[component], svgOptions);
+export function getSVG(box: Box, material: Material, machine: Machine, component: Components, svgOptions?: makerjs.exporter.ISVGRenderOptions): string {
+	return makerjs.exporter.toSVG(boxCoordinates(box, material, machine)[component], svgOptions);
 }
 
 
@@ -31,7 +31,7 @@ export function getSVG(box: Box, material: Material, component: Components, svgO
  * @param box Box of the Components
  * @param material Material to be processed
  */
-export function downloadBoxSVG(box: Box, material: Material, unit: string): void {
+export function downloadBoxSVG(box: Box, material: Material, machine: Machine, unit: string): void {
 	const mTchickness = material.thickness ? material.thickness : 0;
 
 	const svgOptions: makerjs.exporter.ISVGRenderOptions = {
@@ -48,17 +48,17 @@ export function downloadBoxSVG(box: Box, material: Material, unit: string): void
 		units: unitType[unit],
 	}
 	const downloadSVGs: DownloadSVG= {
-		left: getSVG(box, material, Components.leftSide, svgOptions),
+		left: getSVG(box, material, machine, Components.leftSide, svgOptions),
 		right: '',
-		ground: getSVG(box, material, Components.groundSide, svgOptionsGround),
+		ground: getSVG(box, material, machine, Components.groundSide, svgOptionsGround),
 		back: '',
 		connector: '',
 	};
 
 	if (box.connector === Connector.RIGHT || box.connector === Connector.BOTH)
-		downloadSVGs.right = getSVG(box, material, Components.rightSide, svgOptions);
-	if (box.connector !== Connector.NONE) downloadSVGs.connector = getSVG(box, material, Components.connector, svgOptionsConnector);
-	if (box.backSide) downloadSVGs.back = getSVG(box, material, Components.backSide, svgOptions);
+		downloadSVGs.right = getSVG(box, material, machine, Components.rightSide, svgOptions);
+	if (box.connector !== Connector.NONE) downloadSVGs.connector = getSVG(box, material, machine, Components.connector, svgOptionsConnector);
+	if (box.backSide) downloadSVGs.back = getSVG(box, material, machine, Components.backSide, svgOptions);
 
 	(Object.keys(downloadSVGs) as Array<keyof typeof downloadSVGs>).forEach((key) => {
 		const element: string = downloadSVGs[key];
@@ -82,6 +82,6 @@ export function downloadBoxSVG(box: Box, material: Material, unit: string): void
  * @param boxes
  * @param material
  */
-export function downloadBoxesSVG(boxes: Box[], material: Material, unit: string) {
-	boxes.forEach(box => downloadBoxSVG(box, material, unit));
+export function downloadBoxesSVG(boxes: Box[], material: Material, machine: Machine, unit: string) {
+	boxes.forEach(box => downloadBoxSVG(box, material, machine, unit));
 }

@@ -138,50 +138,58 @@ export interface BoxDimensions {
 	depth: number;
 }
 
-export function isValidShelf(shelf: Shelf, processingArea): boolean {
-	return typeof shelf.height === 'number' && typeof shelf.width === 'number' && typeof shelf.depth === 'number' && shelf.depth <= processingArea.longSide;
+export function isValidShelf(shelf: Shelf, machine: Machine): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
+	if (typeof machine.processingArea.longSide === 'undefined') return false;
+	else return typeof shelf.height === 'number' && typeof shelf.width === 'number' && typeof shelf.depth === 'number' && shelf.depth <= machine.processingArea.longSide + tolerance;
 }
 
-export function isValidLongHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
+export function isValidLongHeight(shelf: Shelf, machine: Machine, height: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
 	return (
 		typeof shelf.height !== 'undefined' &&
-		typeof processingArea.longSide !== 'undefined' &&
+		typeof machine.processingArea.longSide !== 'undefined' &&
 		shelf.height % height === 0 &&
-		height <= processingArea.longSide
+		height <= machine.processingArea.longSide + tolerance
 	);
 }
 
-export function isValidShortHeight(shelf: Shelf, processingArea: ProcessingArea, height: number): boolean {
+export function isValidShortHeight(shelf: Shelf, machine: Machine, height: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
 	return (
 		typeof shelf.height !== 'undefined' &&
-		typeof processingArea.shortSide !== 'undefined' &&
+		typeof machine.processingArea.shortSide !== 'undefined' &&
 		shelf.height % height === 0 &&
-		height <= processingArea.shortSide
+		height <= machine.processingArea.shortSide + tolerance
 	);
 }
 
-export function isValidLongWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
+export function isValidLongWidth(shelf: Shelf, machine: Machine, width: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
 	return (
 		typeof shelf.width !== 'undefined' &&
-		typeof processingArea.longSide !== 'undefined' &&
+		typeof machine.processingArea.longSide !== 'undefined' &&
 		shelf.width % width === 0 &&
-		width <= processingArea.longSide
+		width <= machine.processingArea.longSide + tolerance
 	);
 }
 
-export function isValidShortWidth(shelf: Shelf, processingArea: ProcessingArea, width: number): boolean {
+export function isValidShortWidth(shelf: Shelf, machine: Machine, width: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
 	return (
 		typeof shelf.width !== 'undefined' &&
-		typeof processingArea.shortSide !== 'undefined' &&
+		typeof machine.processingArea.shortSide !== 'undefined' &&
 		shelf.width % width === 0 &&
-		width <= processingArea.shortSide
+		width <= machine.processingArea.shortSide + tolerance
 	);
 }
 
-export function isValidLongDepth(shelf: Shelf, processingArea: ProcessingArea, depth: number): boolean {
-	return typeof processingArea.longSide !== 'undefined' && depth === shelf.depth && depth <= processingArea.longSide && depth >= 0;
+export function isValidLongDepth(shelf: Shelf, machine: Machine, depth: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
+	return typeof machine.processingArea.longSide !== 'undefined' && depth === shelf.depth && depth <= machine.processingArea.longSide + tolerance && depth >= 0;
 }
 
-export function isValidShortDepth(shelf: Shelf, processingArea: ProcessingArea, depth: number): boolean {
-	return typeof processingArea.shortSide !== 'undefined' && depth === shelf.depth && depth <= processingArea.shortSide && depth >= 0;
+export function isValidShortDepth(shelf: Shelf, machine: Machine, depth: number): boolean {
+	const tolerance = machine.tolerance ? machine.tolerance : 0;
+	return typeof machine.processingArea.shortSide !== 'undefined' && depth === shelf.depth && depth <= machine.processingArea.shortSide + tolerance && depth >= 0;
 }

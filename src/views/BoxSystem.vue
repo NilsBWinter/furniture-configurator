@@ -103,11 +103,11 @@
 					<o-checkbox v-model="box.backSide"> Backside </o-checkbox>
 				</div>
 
-				<o-button @click="downloadBoxSVG(box, materialRef, unit)">Download SVGs of Box</o-button>
+				<o-button @click="downloadBoxSVG(box, material, machine, unit)">Download SVGs of Box</o-button>
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
-			<o-button @click="downloadBoxesSVG(userBoxes, material, unit)">Download SVGs of all Boxes</o-button>
+			<o-button @click="downloadBoxesSVG(userBoxes, material, machine, unit)">Download SVGs of all Boxes</o-button>
 		</div>
 	</div>
 </template>
@@ -240,7 +240,7 @@ export default {
 		const userBoxes = reactive<Box[]>([]);
 
 		const possibleBasicBoxDimensions = computed(
-			(): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, machine.processingArea, basicBoxSteps),
+			(): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, machine, basicBoxSteps),
 		);
 
 		const basicBox = reactive<Box>(createBox(shelf, possibleBasicBoxDimensions.value));
@@ -266,7 +266,7 @@ export default {
 		});
 
 		watch(shelf, () => {
-			if (isValidShelf(shelf, machine.processingArea)) {
+			if (isValidShelf(shelf, machine)) {
 				basicBox.possibleBoxDimensions = possibleBasicBoxDimensions.value;
 				basicBox.height = basicBox.possibleBoxDimensions.heights[0];
 				basicBox.width = basicBox.possibleBoxDimensions.widths[0];
