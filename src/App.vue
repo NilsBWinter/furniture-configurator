@@ -44,6 +44,10 @@ option {
   color: var(--color-primary-dark) !important;
 }
 
+.o-control-select {
+  right: 32px;
+}
+
 .o-button {
   margin-left: 8px !important;
   margin-right: 8px !important;
