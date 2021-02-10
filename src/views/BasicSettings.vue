@@ -1,41 +1,47 @@
 <template>
-	<div>
+	<div class="container--molecule">
 		<h1>Basic Settings</h1>
 
         <!-- Button to fill in Testdata -->
         <o-button @click="fillTestData">Fill with Example Data</o-button>
 
-		<div class="box-container">
-			<h2>Enter the maximum possible processing area of your device</h2>
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>Enter the maximum possible processing area of your device</h2>
 
-			<o-field :label="`Longer Side in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="machineRef.processingArea.longSide" rounded />
-			</o-field>
+				<o-field :label="`Longer Side in ${unitType[unit]}:`" variant="#222">
+					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  rounded />
+				</o-field>
 
-			<o-field :label="`Shorter Side in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="machineRef.processingArea.shortSide" rounded />
-			</o-field>
+				<o-field :label="`Shorter Side in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" rounded />
+				</o-field>
+			</div>
 		</div>
 
 
-		<div class="box-container">
-			<h2>Enter the your Material</h2>
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>Enter the your Material</h2>
 
-			<o-field label="Type:">
-				<o-input type="text" v-model="materialRef.type" rounded />
-			</o-field>
+				<o-field label="Type:">
+					<o-input type="text" v-model="materialRef.type" rounded />
+				</o-field>
 
-			<o-field :label="`Thickness in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="materialRef.thickness" rounded />
-			</o-field>
+				<o-field :label="`Thickness in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="materialRef.thickness" rounded />
+				</o-field>
+			</div>
 		</div>
 
-		<div class="box-container">
-			<h2>Enter the tolerance of your device</h2>
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>Enter the tolerance of your device</h2>
 
-			<o-field :label="`Tolerance in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="machineRef.tolerance" rounded />
-			</o-field>
+				<o-field :label="`Tolerance in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="machineRef.tolerance" rounded />
+				</o-field>
+			</div>
 		</div>
 
 		<!-- <div> Future Code

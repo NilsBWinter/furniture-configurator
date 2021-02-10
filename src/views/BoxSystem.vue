@@ -1,52 +1,63 @@
 <template>
-	<div>
+	<div class="container--molecule">
 		<h1>Box System</h1>
 
 		<!-- Button to fill in Testdata -->
 		<o-button @click="fillTestData">Fill with Example Data</o-button>
 
-		<div class="box-container">
-			<h2>Enter the dimensions of your shelf</h2>
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>Enter the dimensions of your shelf</h2>
 
-			<o-field :label="`Shelf Height in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="shelf.height" rounded />
-			</o-field>
+				<o-field :label="`Shelf Height in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="shelf.height" rounded />
+				</o-field>
 
-			<o-field :label="`Shelf Width in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="shelf.width" rounded />
-			</o-field>
+				<o-field :label="`Shelf Width in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="shelf.width" rounded />
+				</o-field>
 
-			<o-field :label="`Shelf Depth in ${unitType[unit]}:`">
-				<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="machine.processingArea.longSide" />
-			</o-field>
+				<o-field :label="`Shelf Depth in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="machine.processingArea.longSide" />
+				</o-field>
+			</div>
 		</div>
 
-		<div class="box-container">
-			<h2>Define the dimensions of your basict Box(this will define your smallest item size in the shelf Grid)</h2>
-			<p>
-				You can define bigger boxes based on your basic box (the dimesnions of your basic box have to be a divider by the maximum of the
-				possible processable area of you machine)
-			</p>
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>
+					Define the dimensions of your basict Box<br/>
+					(this will define your smallest item size in the shelf Grid)
+				</h2>
+				<p>
+					You can define bigger boxes based on your basic box (the dimesnions of your basic box have to be a divider by the maximum of the
+					possible processable area of you machine)
+				</p>
 
-			<o-field label="basicBoxHeight:">
-				<o-select v-model="basicBox.height" rounded>
-					<option v-for="(height, index) in basicBox.possibleBoxDimensions.heights" :key="index" :value="height">
-						{{ index + 1 }}
-					</option>
-				</o-select>
-				corresponds to a height of {{ basicBox.height }} {{unitType[unit]}}
-			</o-field>
+				<o-field label="basicBoxHeight:">
+					<o-select v-model="basicBox.height" rounded>
+						<option v-for="(height, index) in basicBox.possibleBoxDimensions.heights" :key="index" :value="height">
+							{{ index + 1 }}
+						</option>
+					</o-select>
+					<div class="afterSelectText"> 
+						a height of {{ basicBox.height }} {{unitType[unit]}}
+					</div>
+				</o-field>
 
-			<o-field label="basicBoxWidth:">
-				<o-select v-model="basicBox.width" rounded>
-					<option v-for="(width, index) in basicBox.possibleBoxDimensions.widths" :key="index" :value="width">
-						{{ index + 1 }}
-					</option>
-				</o-select>
-				corresponds to a width of {{ basicBox.width }} {{unitType[unit]}}
-			</o-field>
+				<o-field label="basicBoxWidth:">
+					<o-select v-model="basicBox.width" rounded>
+						<option v-for="(width, index) in basicBox.possibleBoxDimensions.widths" :key="index" :value="width">
+							{{ index + 1 }}
+						</option>
+					</o-select>
+					<div class="afterSelectText"> 
+						a width of {{ basicBox.width }} {{unitType[unit]}}
+					</div>
+				</o-field>
 
-			<o-field label="basicBoxDepth:">{{ basicBox.depth }}</o-field>
+				<o-field label="basicBoxDepth:">a depth of {{ basicBox.depth }} {{unitType[unit]}}</o-field>
+			</div>
 		</div>
 
 		<div>
@@ -64,46 +75,44 @@
 		<div>
 			<h2>Configure your Boxes</h2>
 
-			<div v-for="(box, index) in userBoxes" :key="index" :value="box" class="box-container">
-				<h3>{{ box.content }} Height:{{ box.height }} Width:{{ box.width }}</h3>
+			<div v-for="(box, index) in userBoxes" :key="index" :value="box" class="container--atom">
+				<div class="container--atom__inner">
 
-				<div class="box-container-field">
-					<h4>Configure the height and width of the box</h4>
+					<h3>{{ box.content }} Height:{{ box.height }} Width:{{ box.width }}</h3>
 
-					<o-field label="Box height:">
-						<o-select v-model="box.height" rounded>
-							<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
-								{{ index + 1 }}
-							</option>
-						</o-select>
-						corresponds to a height of {{ box.height }} {{unitType[unit]}}
-					</o-field>
+						<h4>Configure the height and width of the box</h4>
 
-					<o-field label="Box width:">
-						<o-select v-model="box.width" rounded>
-							<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
-								{{ index + 1 }}
-							</option>
-						</o-select>
-						corresponds to a width of {{ box.width }} {{unitType[unit]}}
-					</o-field>
+						<o-field label="Box height:">
+							<o-select v-model="box.height" rounded>
+								<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
+									{{ index + 1 }}
+								</option>
+							</o-select>
+							a height of {{ box.height }} {{unitType[unit]}}
+						</o-field>
+
+						<o-field label="Box width:">
+							<o-select v-model="box.width" rounded>
+								<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
+									{{ index + 1 }}
+								</option>
+							</o-select>
+							<div class="afterSelectText"> 
+								a width of {{ box.width }} {{unitType[unit]}}
+							</div>
+						</o-field>
+							<h4>Choose if the box should have a connection on a side</h4>
+						<o-field>
+							<o-checkbox v-model="box.connectorLeft"> Connection to the left side </o-checkbox>
+
+							<o-checkbox v-model="box.connectorRight"> Connection to the right side </o-checkbox>
+						</o-field>
+						<h4>Choose if the Box should have a backside(improves stability)</h4>
+						<o-field>
+							<o-checkbox v-model="box.backSide"> Backside </o-checkbox>
+						</o-field>
+						<o-button @click="downloadBoxSVG(box, material, machine, unit)">Download SVGs of Box</o-button>
 				</div>
-
-				<div>
-					<h4>Choose if the box should be connected with an other Box to the left or right side</h4>
-
-					<o-checkbox v-model="box.connectorLeft"> Connection to the left side </o-checkbox>
-
-					<o-checkbox v-model="box.connectorRight"> Connection to the right side </o-checkbox>
-				</div>
-
-				<div>
-					<h4>Choose if the Box should have a backside or not (improves stability)</h4>
-
-					<o-checkbox v-model="box.backSide"> Backside </o-checkbox>
-				</div>
-
-				<o-button @click="downloadBoxSVG(box, material, machine, unit)">Download SVGs of Box</o-button>
 			</div>
 
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button>
@@ -350,7 +359,10 @@ export default {
 }
 
 .grid-stack {
-	border: 1px solid blue;
+	border: 1px solid var(--color-primary-dark);
+	border-radius: 4px;
+
+	margin: 16px;
 
 	&-item {
 		border: 3px solid;
@@ -360,7 +372,7 @@ export default {
 			flex-direction: column;
 			justify-content: center;
 
-			background-color: white;
+			background-color: var(--color-primary-light);
 		}
 	}
 }

@@ -6,6 +6,15 @@
 </template>
 
 <style lang="scss">
+
+:root {
+    --color-primary:#A60D0D;
+    --color-primary-dark:#400101;
+    --color-primary-light: #F20505;
+    --color-secondary:#F21D2F;
+    --color-background: #D9D5D2;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,26 +36,46 @@
   }
 }
 
-.box-container {
-	display: grid;
-	justify-content: center;
+.o-button,
+.o-input,
+.o-select,
+option {
+  background-color: var(--color-primary-light) !important;
+  color: var(--color-primary-dark) !important;
+}
 
-	border: solid 1px;
-	margin-bottom: 16px;
+.o-button {
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+}
+
+.o-icon {
+  color: var(--color-primary-dark) !important;
 }
 
 .o-field {
   display: flex;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
+
+  // justify-content: space-between;
+
+  align-items: center;
+
+  // margin-left: auto;
+  // margin-right: auto;
+
+  max-width: 540px;
 
   .o-field-label {
-	align-self: center;
+    align-self: center;
+    text-align: left;
 
-	// padding-right: 8px;
-	width: 200px;
+    padding-right: 16px;
+    width: 150px;
   }
+
+  // .o-input {
+  //   max-width: 200px;
+  // }
 
   .o-control-input {
 	display: contents;

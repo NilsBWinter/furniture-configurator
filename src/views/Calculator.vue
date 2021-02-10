@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="calculator">
         <h1>Calculator</h1>
 
         <o-field label="Machinetype:">
@@ -77,6 +77,50 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+
+
+.calculator {
+    max-width: 1080px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    // background-color: var(--color-background);
+
+    .container--atom {
+        // justify-content: center;
+        text-align: -webkit-center;
+        text-align: -moz-center;
+
+        border: solid 1px;
+        border-radius: 4px;
+
+        margin: 16px;
+
+        &__inner {
+            margin-left: auto;
+            margin-right: auto;
+
+            padding-bottom: 16px;
+
+            max-width: 720px;
+            width: 100%;
+        }
+    }
+
+    .container--molecule {
+        background-color: var(--color-background);
+
+        border-radius: 4px;
+
+        margin: 16px;
+        padding: 16px;
+    }
+
+    .afterSelectText {
+        padding-left: 16px;
+    }
+}
 
 </style>
