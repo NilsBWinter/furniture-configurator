@@ -7,14 +7,48 @@
 
 		<div class="container--atom">
 			<div class="container--atom__inner">
+				<h2>Choose wich Unit should be used</h2>
+
+				<o-field label="Unit:">
+					<o-select v-model="unitRef" rounded>
+						<option v-for="(u, index) in unitType" :key="index" :value="index">
+							{{ index }}
+						</option>
+					</o-select>
+				</o-field>
+			</div>
+		</div>
+
+		<div class="container--atom">
+			<div class="container--atom__inner">
+				<h2>Choose your Device</h2>
+
+				<o-field label="Machinetype:">
+					<o-select v-model="machineRef">
+						<option v-for="(m, index) in machines" :key="index" :value="m">
+							{{ m.name }}
+						</option>
+					</o-select>
+				</o-field>
+
+				<o-field v-if="machineRef.dogboneRadius" :label="`Dogbone radius in ${unitType[unit]}`">
+					<o-input type="number" v-model.number="machineRef.dogboneRadius" />
+				</o-field>
+
 				<h2>Enter the maximum possible processing area of your device</h2>
 
 				<o-field :label="`Longer Side in ${unitType[unit]}:`" variant="#222">
-					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  rounded />
+					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  />
 				</o-field>
 
 				<o-field :label="`Shorter Side in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" rounded />
+					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" />
+				</o-field>
+
+				<h2>Enter the tolerance of your device</h2>
+
+				<o-field :label="`Tolerance in ${unitType[unit]}:`">
+					<o-input type="number" v-model.number="machineRef.tolerance" />
 				</o-field>
 			</div>
 		</div>
@@ -25,21 +59,11 @@
 				<h2>Enter the your Material</h2>
 
 				<o-field label="Type:">
-					<o-input type="text" v-model="materialRef.type" rounded />
+					<o-input type="text" v-model="materialRef.type" />
 				</o-field>
 
 				<o-field :label="`Thickness in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="materialRef.thickness" rounded />
-				</o-field>
-			</div>
-		</div>
-
-		<div class="container--atom">
-			<div class="container--atom__inner">
-				<h2>Enter the tolerance of your device</h2>
-
-				<o-field :label="`Tolerance in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="machineRef.tolerance" rounded />
+					<o-input type="number" v-model.number="materialRef.thickness" />
 				</o-field>
 			</div>
 		</div>
@@ -64,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { reactive, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
 import { Material, machines, Machine} from '@/store/calculator';
 
@@ -83,43 +107,47 @@ const testMaterial = reactive({
 export default {
 	name: 'BasicSettings',
 
-	emits: ['update:material', 'update:machine'],
+	emits: ['update:material', 'update:machine', 'update:unit'],
 
 	props: {
 		machine: {
 			type: Object as () => Machine,
-			default: true,
+			required: true,
 		},
 		material: {
 			type: Object as () => Material,
 			required: true,
         },
         unit: {
-            type: Object as () => typeof unitType,
-            default: 'Millimeter',
+            type: String,
+            required: true,
         },
 	},
 
 	setup(props, context) {
 
-		const machineRef = reactive<Machine>(props.machine);
+		const machineRef = ref<Machine>(props.machine);
+
+		const unitRef = ref<string>(props.unit);
 
 		const materialRef = reactive<Material>(props.material);
 
-		watch( machineRef, () => {
-			console.log('logged123');
-			context.emit('update:machine', machineRef);
+		watch( unitRef, () => {
+			context.emit('update:unit', unitRef.value);
 		});
 
-		watch(materialRef, () => {
+		watch( machineRef, () => {
+			context.emit('update:machine', machineRef.value);
+		});
+
+		watch( materialRef, () => {
 			context.emit('update:material', materialRef);
 		});
 
 		// Fills in Testdata to show User possible Inputs
 		function fillTestData(): void {
-            machineRef.processingArea.longSide = testProcessingArea.longSide;
-            machineRef.processingArea.shortSide = testProcessingArea.shortSide;
-            machineRef.tolerance = 3;
+			machineRef.value.processingArea = testProcessingArea;
+            machineRef.value.tolerance = 3;
             materialRef.type = testMaterial.type;
             materialRef.thickness = testMaterial.thickness;
 		}
@@ -129,6 +157,7 @@ export default {
 			unitType,
 			machineRef,
 			machines,
+			unitRef,
             
             //Functions
             fillTestData,

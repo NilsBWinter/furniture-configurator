@@ -10,15 +10,15 @@
 				<h2>Enter the dimensions of your shelf</h2>
 
 				<o-field :label="`Shelf Height in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="shelf.height" rounded />
+					<o-input type="number" v-model.number="shelf.height" />
 				</o-field>
 
 				<o-field :label="`Shelf Width in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="shelf.width" rounded />
+					<o-input type="number" v-model.number="shelf.width" />
 				</o-field>
 
 				<o-field :label="`Shelf Depth in ${unitType[unit]}:`">
-					<o-input type="number" v-model.number="shelf.depth" rounded useHtml5Validation :max="machine.processingArea.longSide" />
+					<o-input type="number" v-model.number="shelf.depth" useHtml5Validation :max="machine.processingArea.longSide" />
 				</o-field>
 			</div>
 		</div>
@@ -35,7 +35,7 @@
 				</p>
 
 				<o-field label="basicBoxHeight:">
-					<o-select v-model="basicBox.height" rounded>
+					<o-select v-model="basicBox.height">
 						<option v-for="(height, index) in basicBox.possibleBoxDimensions.heights" :key="index" :value="height">
 							{{ index + 1 }}
 						</option>
@@ -46,7 +46,7 @@
 				</o-field>
 
 				<o-field label="basicBoxWidth:">
-					<o-select v-model="basicBox.width" rounded>
+					<o-select v-model="basicBox.width">
 						<option v-for="(width, index) in basicBox.possibleBoxDimensions.widths" :key="index" :value="width">
 							{{ index + 1 }}
 						</option>
@@ -83,7 +83,7 @@
 						<h4>Configure the height and width of the box</h4>
 
 						<o-field label="Box height:">
-							<o-select v-model="box.height" rounded>
+							<o-select v-model="box.height">
 								<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
 									{{ index + 1 }}
 								</option>
@@ -92,7 +92,7 @@
 						</o-field>
 
 						<o-field label="Box width:">
-							<o-select v-model="box.width" rounded>
+							<o-select v-model="box.width">
 								<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
 									{{ index + 1 }}
 								</option>
