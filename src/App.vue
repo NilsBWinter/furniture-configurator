@@ -10,8 +10,9 @@
 :root {
     --color-primary:#A60D0D;
     --color-primary-dark:#400101;
-    --color-primary-light: #F20505;
+    --color-primary-light1: #F20505;
     --color-secondary:#F21D2F;
+    --color-primary-light:#FF620F;
     --color-background: #D9D5D2;
 }
 
@@ -88,6 +89,14 @@ option {
 
 .icon {
 	height: 24px;
+}
+
+html {
+  background-color: grey;
+
+  h1 {
+    font-size: 4em;
+  }
 }
 
 // Fixes oruga setting disabled attribute to false instead of ommiting it

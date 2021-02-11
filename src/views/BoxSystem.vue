@@ -26,7 +26,7 @@
 		<div class="container--atom">
 			<div class="container--atom__inner">
 				<h2>
-					Define the dimensions of your basict Box<br/>
+					Define the dimensions of your basic Box<br/>
 					(this will define your smallest item size in the shelf Grid)
 				</h2>
 				<p>
@@ -34,7 +34,7 @@
 					possible processable area of you machine)
 				</p>
 
-				<o-field label="basicBoxHeight:">
+				<o-field class="basicBoxSelect" label="BasicBox Height:">
 					<o-select v-model="basicBox.height">
 						<option v-for="(height, index) in basicBox.possibleBoxDimensions.heights" :key="index" :value="height">
 							{{ index + 1 }}
@@ -45,7 +45,7 @@
 					</div>
 				</o-field>
 
-				<o-field label="basicBoxWidth:">
+				<o-field class="basicBoxSelect" label="BasicBox Width:">
 					<o-select v-model="basicBox.width">
 						<option v-for="(width, index) in basicBox.possibleBoxDimensions.widths" :key="index" :value="width">
 							{{ index + 1 }}
@@ -56,7 +56,7 @@
 					</div>
 				</o-field>
 
-				<o-field label="basicBoxDepth:">a depth of {{ basicBox.depth }} {{unitType[unit]}}</o-field>
+				<o-field label="BasicBox Depth:">a depth of {{ basicBox.depth }} {{unitType[unit]}}</o-field>
 			</div>
 		</div>
 
@@ -374,6 +374,12 @@ export default {
 
 			background-color: var(--color-primary-light);
 		}
+	}
+}
+
+.basicBoxSelect {
+	.o-control-select {
+		right: 0;
 	}
 }
 </style>
