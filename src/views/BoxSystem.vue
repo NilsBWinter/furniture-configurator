@@ -79,18 +79,18 @@
 			</div>
 		</div>
 
-		<div v-if="userBoxes.length > 0">
+		<div v-if="activeBox">
 			<h2>Configure your compartments</h2>
 
-			<div v-for="(box, index) in userBoxes" :key="index" :value="box" class="container--atom">
+			<div class="container--atom">
 				<div class="container--atom__inner">
 
-					<h3>{{ box.content }} Height:{{ box.height }} Width:{{ box.width }}</h3>
+					<h3>Compartment {{activeBox.h}}.{{activeBox.w}} Height:{{ activeBox.height }} Width:{{ activeBox.width }}</h3>
 
 						<h4>Configure the height and width of the compartment</h4>
 
 						<o-field label="compartment height:">
-							<o-select v-model="box.height">
+							<o-select v-model="activeBox.height">
 								<option v-for="(height, index) in possibleUserBoxDimensions.heights" :key="index" :value="height">
 									{{ height }}
 								</option>
@@ -99,7 +99,7 @@
 						</o-field>
 
 						<o-field label="compartment width:">
-							<o-select v-model="box.width">
+							<o-select v-model="activeBox.width">
 								<option v-for="(width, index) in possibleUserBoxDimensions.widths" :key="index" :value="width">
 									{{ width }}
 								</option>
@@ -110,29 +110,30 @@
 						</o-field>
 							<h4>Choose if the compartment should have a connection on a side</h4>
 						<o-field>
-							<o-checkbox v-model="box.connectorLeft" variant="warning"> Connection to the left side </o-checkbox>
+							<o-checkbox v-model="activeBox.connectorLeft" variant="warning"> Connection to the left side </o-checkbox>
 
-							<o-checkbox v-model="box.connectorRight" variant="warning"> Connection to the right side </o-checkbox>
+							<o-checkbox v-model="activeBox.connectorRight" variant="warning"> Connection to the right side </o-checkbox>
 						</o-field>
 						<h4>Choose if the compartment should have a backside(improves stability)</h4>
 						<o-field>
-							<o-checkbox v-model="box.backSide" variant="warning"> Backside </o-checkbox>
+							<o-checkbox v-model="activeBox.backSide" variant="warning"> Backside </o-checkbox>
 						</o-field>
-						<o-button @click="downloadBoxSVG(box, material, machine, unit)">Download SVGs of compartment</o-button>
+						<o-button @click="downloadBoxSVG(activeBox, material, machine, unit)">Download SVGs of compartment</o-button>
 				</div>
 			</div>
 
 			<!-- <o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add Box</o-button> -->
 			<o-button @click="downloadBoxesSVG(userBoxes, material, machine, unit)">Download SVGs of all compartments</o-button>
 		</div>
+		<div v-else> Just click on a Compartment to show its details</div>
 	</div>
 </template>
 
 <script lang="ts">
 import { computed, ComputedRef, onMounted, reactive, ref, watch } from 'vue';
 
-import { Box, Shelf, BoxDimensions, Material, isValidShelf, Machine } from '../store/calculator';
-import { boxCoordinates } from '../store/boxCoordinates';
+import { Box, Shelf, BoxDimensions, Material, isValidShelf, Machine } from '../logic/calculator';
+import { boxCoordinates } from '../logic/boxCoordinates';
 import {
 	createTestBox,
 	createBox,
@@ -140,15 +141,16 @@ import {
 	calculatePossibleBasicBoxDimensions,
 	calculatePossibleUserBoxDimensions,
 	updatBoxDimensions,
-} from '../store/box';
-import { calculateGrid, resetGrid } from '../store/boxGrid';
-import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../store/svg';
+} from '../logic/box';
+import { calculateGrid, resetGrid } from '../logic/boxGrid';
+import { downloadBoxSVG, downloadBoxesSVG, getSVG } from '../logic/svg';
 
 import GridStack from 'gridstack/dist/gridstack-h5.js';
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/gridstack-extra.css';
 import { GridStackOptions } from 'gridstack';
 import { unitType } from 'makerjs';
+import { useStore } from 'vuex';
 
 function createTestBoxes(shelf: Shelf, possibleUserBoxDimensions: BoxDimensions): Box[] {
 	return reactive<Array<Box>>([
@@ -242,6 +244,10 @@ export default {
 	},
 
 	setup(props) {
+
+		const store = useStore();
+
+		const activeBox = computed(() => store.state.activeBox);
 		const basicBoxSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		const userBoxSteps = [1, 2, 3, 4, 5];
 
@@ -254,6 +260,8 @@ export default {
 		const shelf = reactive<Shelf>({});
 
 		const userBoxes = reactive<Box[]>([]);
+
+		const gridItemButtons = computed(() => document.getElementsByClassName('gridItem__button'));
 
 		const possibleBasicBoxDimensions = computed(
 			(): BoxDimensions => calculatePossibleBasicBoxDimensions(shelf, machine, basicBoxSteps),
@@ -310,6 +318,8 @@ export default {
 				if (!box.validDimensions) boxes.push(box);
 			});
 			invalidBoxes.value = boxes;
+
+			const gridButtons = (document.getElementsByClassName('griditem__button'));
 		});
 
 		function fillTestData(): void {
@@ -338,6 +348,8 @@ export default {
 			invalidBoxes,
 			info,
 			unitType,
+			activeBox,
+			gridItemButtons,
 
 			// Functions
 			createBox,
@@ -369,17 +381,27 @@ export default {
 	border: 1px solid var(--color-primary-dark);
 	border-radius: 4px;
 
-	margin: 16px;
+	// margin: 16px;
 
 	&-item {
 		border: 3px solid;
 
 		&-content {
+			position: relative !important;
+			inset: 0 !important;
+			height: 100%;
+
 			display: flex;
-			flex-direction: column;
+			// flex-direction: column;
 			justify-content: center;
 
 			background-color: var(--color-primary-light);
+
+			& button {
+				width: 100%;
+
+				background-color: var(--color-primary-light);
+			}
 		}
 	}
 }

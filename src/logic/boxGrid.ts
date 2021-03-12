@@ -2,6 +2,7 @@ import { Shelf, Box } from './calculator';
 import GridStack from 'gridstack/dist/gridstack-h5.js';
 import { GridItemHTMLElement, GridStackOptions } from 'gridstack';
 import { updateBoxGridPosition, updateBoxSize } from './box';
+import store from '@/store';
 
 export function createGridColumnsCSS(columns: number): void {
     const style = document.createElement('style');
@@ -50,7 +51,18 @@ export function calculateGrid(gridOptions: GridStackOptions, shelf: Shelf, basic
     if(columns > 12) createGridColumnsCSS(columns);
     else gridElement.classList.add(`grid-stack-${columns}`);
 	userBoxes.forEach((box) => {
-        grid.addWidget(box);
+        const item = document.createElement('div');
+
+        item.classList.add('grid-stack-item');
+        item.addEventListener('click', () => store.commit('setActiveBox', box));
+
+        const content = document.createElement('div');
+        content.classList.add('grid-stack-item-content');
+        content.innerHTML = box.content;
+
+        item.appendChild(content);
+        grid.addWidget(item,box);
+
         addBoxCSS(box);
 	});
 }

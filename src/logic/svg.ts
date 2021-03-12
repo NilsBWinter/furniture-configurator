@@ -2,8 +2,8 @@ import makerjs from 'makerjs';
 import { unitType } from 'makerjs';
 
 import { Box, Material, Connector, Machine } from './calculator';
-import { Components } from './boxCoordinates';
-import { boxCoordinates } from '../store/boxCoordinates';
+import { boxCoordinates, Components } from './boxCoordinates';
+
 
 export interface DownloadSVG {
 	left: string;

@@ -1,3 +1,4 @@
+import store from '../store';
 import {
 	Shelf,
 	BoxDimensions,

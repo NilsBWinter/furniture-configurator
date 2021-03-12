@@ -15,7 +15,7 @@
 import {reactive, ref} from 'vue';
 import BasicSettings from './BasicSettings.vue'
 import BoxSystem from './BoxSystem.vue'
-import { Material, machineTypes, machines, Machine} from '@/store/calculator';
+import { Material, machineTypes, machines, Machine} from '@/logic/calculator';
 import { unitType } from 'makerjs';
 
 export default {

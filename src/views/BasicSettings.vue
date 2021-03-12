@@ -95,7 +95,7 @@
 <script lang="ts">
 import { reactive, ref, watch } from 'vue';
 
-import { Material, machines, Machine} from '@/store/calculator';
+import { Material, machines, Machine} from '@/logic/calculator';
 
 import { unitType } from 'makerjs';
 
