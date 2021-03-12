@@ -5,8 +5,7 @@ import router from './router'
 import store from './store'
 
 import Oruga from '@oruga-ui/oruga-next';
-import { mdiChevronDown } from '@mdi/js';
-import { iconMdi, registerIcons } from './Icons';
+import { iconMdi } from './Icons';
 import '@oruga-ui/oruga-next/dist/oruga.css';
 
 
@@ -22,11 +21,6 @@ app.use(Oruga, {
 	},
 });
 app.component('icon-mdi', iconMdi);
-
-// These are used by oruga
-registerIcons({
-    mdiCaretDown: mdiChevronDown,
-});
 
 app.use(router)
 

@@ -7,6 +7,8 @@
 
 <style lang="scss">
 
+@import '~@oruga-ui/oruga-next/dist/oruga-full-vars.css';
+
 :root {
     --color-primary:#A60D0D;
     --color-primary-dark:#400101;
@@ -37,19 +39,26 @@
   }
 }
 
-.o-button,
+.o-btn,
 .o-input,
-.o-select,
-option {
+.o-sel,
+option,
+.o-chk__check,
+.o-chk__check--checked {
   background-color: var(--color-primary-light) !important;
   color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
 }
 
-.o-control-select {
+.o-input {
+  margin-right: 8px;
+}
+
+.o-ctrl-sel {
   right: 32px;
 }
 
-.o-button {
+.o-btn {
   margin-left: 8px !important;
   margin-right: 8px !important;
 }
@@ -70,7 +79,7 @@ option {
 
   max-width: 540px;
 
-  .o-field-label {
+  .o-field__label {
     align-self: center;
     text-align: left;
 
@@ -82,7 +91,7 @@ option {
   //   max-width: 200px;
   // }
 
-  .o-control-input {
+  .o-ctrl-input {
 	display: contents;
   }
 }

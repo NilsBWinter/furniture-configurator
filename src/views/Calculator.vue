@@ -1,6 +1,6 @@
 <template>
     <div class="calculator">
-        <h1>Furniture-Calculator</h1>
+        <h1>Shelf-Configurator</h1>
 
        
        

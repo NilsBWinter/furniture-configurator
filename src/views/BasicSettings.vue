@@ -10,7 +10,7 @@
 				<h2>Choose wich Unit should be used</h2>
 
 				<o-field label="Unit:">
-					<o-select v-model="unitRef" rounded>
+					<o-select v-model="unitRef">
 						<option v-for="(u, index) in unitType" :key="index" :value="index">
 							{{ index }}
 						</option>
@@ -31,24 +31,28 @@
 					</o-select>
 				</o-field>
 
-				<o-field v-if="machineRef.dogboneRadius" :label="`Dogbone radius in ${unitType[unit]}`">
-					<o-input type="number" v-model.number="machineRef.dogboneRadius" />
+				<o-field v-if="machineRef.dogboneRadius" :label="`Dogbone radius:`">
+					<o-input icon="diameterVariant" type="number" v-model.number="machineRef.dogboneRadius" />
+				{{unitType[unit]}}
 				</o-field>
 
 				<h2>Enter the maximum possible processing area of your device</h2>
 
-				<o-field :label="`Longer Side in ${unitType[unit]}:`" variant="#222">
+				<o-field :label="`Longer Side:`" variant="#222">
 					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  />
+					{{unitType[unit]}}
 				</o-field>
 
-				<o-field :label="`Shorter Side in ${unitType[unit]}:`">
+				<o-field :label="`Shorter Side:`">
 					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" />
+					{{unitType[unit]}}
 				</o-field>
 
-				<h2>Enter the tolerance of your device</h2>
+				<h2 v-if="!machineRef.dogboneRadius">Enter the curv of your device</h2>
 
-				<o-field :label="`Tolerance in ${unitType[unit]}:`">
+				<o-field v-if="!machineRef.dogboneRadius" :label="`Curv:`">
 					<o-input type="number" v-model.number="machineRef.tolerance" />
+					{{unitType[unit]}}
 				</o-field>
 			</div>
 		</div>
@@ -58,12 +62,13 @@
 			<div class="container--atom__inner">
 				<h2>Enter the your Material</h2>
 
-				<o-field label="Type:">
+				<!-- <o-field label="Type:">
 					<o-input type="text" v-model="materialRef.type" />
-				</o-field>
+				</o-field> -->
 
-				<o-field :label="`Thickness in ${unitType[unit]}:`">
+				<o-field :label="`Thickness:`">
 					<o-input type="number" v-model.number="materialRef.thickness" />
+					{{unitType[unit]}}
 				</o-field>
 			</div>
 		</div>
@@ -93,6 +98,13 @@ import { reactive, ref, watch } from 'vue';
 import { Material, machines, Machine} from '@/store/calculator';
 
 import { unitType } from 'makerjs';
+
+import { mdiDiameterVariant } from '@mdi/js';
+import { registerIcons } from '@/Icons';
+
+registerIcons({
+	mdiDiameterVariant,
+});
 
 const testProcessingArea = reactive({
 	longSide: 3000,

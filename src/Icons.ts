@@ -1,10 +1,18 @@
 import { defineComponent, h } from 'vue';
 
+import { mdiMenuDown } from '@mdi/js';
+
 export interface IconDefinition {
 	[index: string]: string;
 }
 
 const iconList: IconDefinition = {};
+
+// These are used by oruga
+registerIcons({
+	mdiMenuDown,
+	mdiCaretDown: mdiMenuDown,
+});
 
 /**
  * Registers Icons to be used via o-icon
@@ -20,7 +28,7 @@ const iconList: IconDefinition = {};
  * ```
  * Now you can use the icon like this:
  * ```html
- * <o-icon name="bell" />
+ * <o-icon icon="bell" />
  * ```
  *
  * This also works for any component internally using o-icon.
@@ -51,7 +59,7 @@ export const iconMdi = defineComponent({
 		icon: {
 			required: true,
 			type: Object as () => [string, string],
-			validator: (value: [string, string]): boolean => Array.isArray(value) && value.length === 2 && typeof iconList[value[1]] === 'string',
+			validator: (value: [string, string]) => Array.isArray(value) && value.length === 2 && typeof iconList[value[1]] === 'string',
 		},
 	},
 
