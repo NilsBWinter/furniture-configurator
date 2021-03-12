@@ -68,7 +68,7 @@
 		</div>
 
 		<div>
-			<h2>Box Grid</h2>
+			<h2>Shelf Grid</h2>
 			<o-button @click="createBoxToArray(userBoxes, shelf, possibleUserBoxDimensions)">Add compartment</o-button>
 			<o-button @click="fillTestBoxes">Add Example compartments</o-button>
 			<o-button @click="userBoxes.length = 0">Delete all compartments</o-button>

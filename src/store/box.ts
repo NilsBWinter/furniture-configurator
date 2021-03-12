@@ -1,4 +1,3 @@
-import { reactive } from 'vue';
 import {
 	Shelf,
 	BoxDimensions,
@@ -61,7 +60,7 @@ export function createBox(shelf: Shelf, boxDimensions: BoxDimensions): Box {
 
 
 		get content() {
-			return `Box ${box.h}.${box.w}`;
+			return `Compartment ${box.h}.${box.w}`;
 		},
 
 		get validDimensions() {
