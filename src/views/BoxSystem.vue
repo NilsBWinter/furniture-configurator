@@ -119,6 +119,7 @@
 							<o-checkbox v-model="activeBox.backSide" variant="warning"> Backside </o-checkbox>
 						</o-field>
 						<o-button @click="downloadBoxSVG(activeBox, material, machine, unit)">Download SVGs of compartment</o-button>
+						<o-button @click="deleteBox(activeBox)">Delete Box</o-button>
 				</div>
 			</div>
 
@@ -259,7 +260,7 @@ export default {
 
 		const shelf = reactive<Shelf>({});
 
-		const userBoxes = reactive<Box[]>([]);
+		let userBoxes = reactive<Box[]>([]);
 
 		const gridItemButtons = computed(() => document.getElementsByClassName('gridItem__button'));
 
@@ -335,6 +336,15 @@ export default {
 			}
 		}
 
+		function deleteBox() {
+			const box = activeBox.value;
+			userBoxes = userBoxes.filter((b) => b.id !== box.id);
+			console.log(userBoxes);
+			resetGrid('grid');
+			calculateGrid(gridOptions(shelf, basicBox), shelf, basicBox, userBoxes);
+			store.commit('setActiveBox', undefined);
+		}
+
 		return {
 			shelf,
 			basicBox,
@@ -357,6 +367,7 @@ export default {
 			createBoxToArray,
 			fillTestData,
 			fillTestBoxes,
+			deleteBox,
 		};
 	},
 };

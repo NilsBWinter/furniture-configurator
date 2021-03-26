@@ -21,7 +21,7 @@
 
 		<div class="container--atom">
 			<div class="container--atom__inner">
-				<h2>Choose your Device</h2>
+				<h2>Choose your Machine</h2>
 
 				<o-field label="Machinetype:">
 					<o-select v-model="machineRef">
@@ -36,7 +36,12 @@
 				{{unitType[unit]}}
 				</o-field>
 
-				<h2>Enter the maximum possible processing area of your device</h2>
+				<o-field v-if="!machineRef.dogboneRadius" :label="`Curv:`">
+					<o-input type="number" v-model.number="machineRef.tolerance" />
+					{{unitType[unit]}}
+				</o-field>
+
+				<h2>Enter the specifications of your Processing</h2>
 
 				<o-field :label="`Longer Side:`" variant="#222">
 					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  />
@@ -46,30 +51,12 @@
 				<o-field :label="`Shorter Side:`">
 					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" />
 					{{unitType[unit]}}
-				</o-field>
+				</o-field>		
 
-				<h2 v-if="!machineRef.dogboneRadius">Enter the curv of your device</h2>
-
-				<o-field v-if="!machineRef.dogboneRadius" :label="`Curv:`">
-					<o-input type="number" v-model.number="machineRef.tolerance" />
-					{{unitType[unit]}}
-				</o-field>
-			</div>
-		</div>
-
-
-		<div class="container--atom">
-			<div class="container--atom__inner">
-				<h2>Enter the your Material</h2>
-
-				<!-- <o-field label="Type:">
-					<o-input type="text" v-model="materialRef.type" />
-				</o-field> -->
-
-				<o-field :label="`Thickness:`">
+				<o-field :label="`Material Thickness:`">
 					<o-input type="number" v-model.number="materialRef.thickness" />
 					{{unitType[unit]}}
-				</o-field>
+				</o-field>		
 			</div>
 		</div>
 

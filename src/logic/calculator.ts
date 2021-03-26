@@ -32,7 +32,7 @@ export const machines: MachineTypeDefinition = {
 		processingArea: {},
 	},
 	[machineTypes.CNC]: {
-		name: 'CNC',
+		name: 'CNC-Mill',
 		processingArea: {},
 		dogboneRadius: 1,
 	},
