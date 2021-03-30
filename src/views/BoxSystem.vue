@@ -10,17 +10,17 @@
 				<h2>Enter the dimensions of your shelf</h2>
 
 				<o-field :label="`Shelf Height:`">
-					<o-input type="number" v-model.number="shelf.height" />
+					<o-input type="number" v-model.number="shelf.height" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>
 
 				<o-field :label="`Shelf Width:`">
-					<o-input type="number" v-model.number="shelf.width" />
+					<o-input type="number" v-model.number="shelf.width" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>
 
 				<o-field :label="`Shelf Depth:`">
-					<o-input type="number" v-model.number="shelf.depth" useHtml5Validation :max="machine.processingArea.longSide" />
+					<o-input type="number" v-model.number="shelf.depth" useHtml5Validation :max="machine.processingArea.longSide" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>
 			</div>

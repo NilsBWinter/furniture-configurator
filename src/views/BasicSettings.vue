@@ -37,24 +37,24 @@
 				</o-field>
 
 				<o-field v-if="!machineRef.dogboneRadius" :label="`Curv:`">
-					<o-input type="number" v-model.number="machineRef.tolerance" />
+					<o-input type="number" v-model.number="machineRef.tolerance" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>
 
 				<h2>Enter the specifications of your Processing</h2>
 
 				<o-field :label="`Longer Side:`" variant="#222">
-					<o-input type="number" v-model.number="machineRef.processingArea.longSide"  />
+					<o-input type="number" v-model.number="machineRef.processingArea.longSide" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>
 
 				<o-field :label="`Shorter Side:`">
-					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" />
+					<o-input type="number" v-model.number="machineRef.processingArea.shortSide" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>		
 
 				<o-field :label="`Material Thickness:`">
-					<o-input type="number" v-model.number="materialRef.thickness" />
+					<o-input type="number" v-model.number="materialRef.thickness" min=0 oninput="validity.valid||(value='');" />
 					{{unitType[unit]}}
 				</o-field>		
 			</div>
