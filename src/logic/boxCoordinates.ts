@@ -133,6 +133,7 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 			let bottomMid: IModel;
 			let topLeft: IModel;
 			let topRight: IModel;
+			let topMid: IModel;
 			
 			// if machine is from type CNC (future: if a machine needs dogbones) 
 			if (machine.name === machines.CNC.name) {
@@ -141,6 +142,7 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 				bottomMid = new makerjs.models.Dogbone(width, height, dogboneRadius);
 				topLeft = new makerjs.models.Dogbone(width, height, dogboneRadius);
 				topRight = new makerjs.models.Dogbone(width, height, dogboneRadius);
+				topMid = new makerjs.models.Dogbone(width, height, dogboneRadius);
 			} else {
 				// normal Rectangles e.g for lasercutting
 				bottomLeft = new makerjs.models.Rectangle(width, height);
@@ -148,6 +150,7 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 				bottomMid = new makerjs.models.Rectangle(width, height);
 				topLeft = new makerjs.models.Rectangle(width, height);
 				topRight = new makerjs.models.Rectangle(width, height);
+				topMid = new makerjs.models.Rectangle(width, height);
 			}
 
 
@@ -158,6 +161,7 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 			topLeft.origin = [offSetEdgeX, boxHeight - offSetEdgeY - height];
 			topRight.origin = [boxDepth - offSetEdgeX- width, boxHeight - offSetEdgeY - height];
 			bottomMid.origin = [boxDepth / 2 - width / 2, offSetEdgeY];
+			topMid.origin = [boxDepth / 2 - width / 2, boxHeight - offSetEdgeY - height];
 			
 	
 
@@ -169,7 +173,10 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 				topRight,
 			];
 
-			if (connector === side || connector === 'BOTH') models.push(bottomMid);
+			if (connector === side || connector === 'BOTH') {
+				models.push(bottomMid);
+				models.push(topMid);
+			}
 
 			return models;
 		}
@@ -369,33 +376,66 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 			rightLine = {...rightLine, ...rightLineDogBones};
 		} 
 
+		let connectorSlotLeft: IPathMap = {
+			leftC1: new makerjs.paths.Line([tenonLength, box.depth / 2 - connectorTenonWidth / 4], [tenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 4]),
+			leftC2: new makerjs.paths.Line([tenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 4], [tenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2]),
+			leftC3: new makerjs.paths.Line([tenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2], [tenonLength + connectorTenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2]),
+			leftC4: new makerjs.paths.Line([tenonLength + connectorTenonLength + connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2], [tenonLength + connectorTenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2]),
+			leftC5: new makerjs.paths.Line([tenonLength + connectorTenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2], [tenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2]),
+			leftC6: new makerjs.paths.Line([tenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2], [tenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 4]),
+			leftC7: new makerjs.paths.Line([tenonLength + connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 4], [tenonLength, box.depth / 2 + connectorTenonWidth / 4]),
+		};
+
+		// needed correction of 1 on x-Axis needs recheck or test in real life
+		let connectorSlotRight: IPathMap = {
+			rightC1: new makerjs.paths.Line([1 + box.width - tenonLength, box.depth / 2 - connectorTenonWidth / 4], [1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 4]),
+			rightC3: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 4], [1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2]),
+			rightC4: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2], [1 + box.width - tenonLength - connectorTenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2]),
+			rightC5: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength - connectorTenonLength / 2, box.depth / 2 - connectorTenonWidth / 2], [1 + box.width - tenonLength - connectorTenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2]),
+			rightC6: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2], [1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2]),
+			rightC7: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 2], [1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 4]),
+			rightC8: new makerjs.paths.Line([1 + box.width - tenonLength - connectorTenonLength / 2, box.depth / 2 + connectorTenonWidth / 4], [1 + box.width - tenonLength, box.depth / 2 + connectorTenonWidth / 4]),
+		}
+
+		// if machine is from type CNC (future: if a machine needs dogbones) 
+		if (machine.name === machines.CNC.name) {
+			const leftConnectorDogBones: IPathMap = {
+				dogboneLeftC1: makerjs.path.dogbone(connectorSlotLeft.leftC2 as IPathLine, connectorSlotLeft.leftC3 as IPathLine, dogboneRadius),
+				dogboneLeftC2: makerjs.path.dogbone(connectorSlotLeft.leftC3 as IPathLine, connectorSlotLeft.leftC4 as IPathLine, dogboneRadius),
+				dogboneLeftC3: makerjs.path.dogbone(connectorSlotLeft.leftC4 as IPathLine, connectorSlotLeft.leftC5 as IPathLine, dogboneRadius),
+				dogboneLeftC4: makerjs.path.dogbone(connectorSlotLeft.leftC5 as IPathLine, connectorSlotLeft.leftC6 as IPathLine, dogboneRadius),
+			};
+
+			const rightConnectorDogBones: IPathMap = {
+				dogboneRightC1: makerjs.path.dogbone(connectorSlotRight.rightC3 as IPathLine, connectorSlotRight.rightC4 as IPathLine, dogboneRadius),
+				dogboneRightC2: makerjs.path.dogbone(connectorSlotRight.rightC4 as IPathLine, connectorSlotRight.rightC5 as IPathLine, dogboneRadius),
+				dogboneRightC3: makerjs.path.dogbone(connectorSlotRight.rightC5 as IPathLine, connectorSlotRight.rightC6 as IPathLine, dogboneRadius),
+				dogboneRightC4: makerjs.path.dogbone(connectorSlotRight.rightC6 as IPathLine, connectorSlotRight.rightC7 as IPathLine, dogboneRadius),
+			};
+
+			connectorSlotLeft = {...connectorSlotLeft, ...leftConnectorDogBones};
+			connectorSlotRight = {...connectorSlotRight, ...rightConnectorDogBones};
+		}
 
 		// Slots
-		let slotLeft: IModel;
-		let slotRight: IModel;
 		let slotBack: IModel;
 		
 		// if machine is from type CNC (future: if a machine needs dogbones) 
 		if (machine.name === machines.CNC.name) {
-			slotLeft = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, dogboneRadius);
-			slotRight = new makerjs.models.Dogbone(connectorTenonLength, connectorTenonWidth / 2, dogboneRadius);
+
 			slotBack = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, dogboneRadius);
 		} else {
 			// normal Rectangles e.g for lasercutting
-			slotLeft = new makerjs.models.Rectangle(connectorTenonLength, connectorTenonWidth / 2);
-			slotRight = new makerjs.models.Rectangle(connectorTenonLength, connectorTenonWidth / 2);
 			slotBack = new makerjs.models.Rectangle(connectorTenonLength, backSlotHeight);
 		}
 
-		slotLeft.origin = [tenonLength + connectorTenonLength + connectorTenonLength / 2, boxDepth / 2 - connectorTenonWidth / 4];
-		slotRight.origin = [box.width - tenonLength - connectorTenonLength - connectorTenonLength / 2, boxDepth / 2 - connectorTenonWidth / 4];
+
 		slotBack.origin = [boxWidth / 2 - backSlotWidth, boxDepth - offSetEdgeY - backSlotHeight];
 
-		let slotLeftLine: IModel = {};
-		let slotRightLine: IModel = {};
 
-		if ([Connector.LEFT, Connector.BOTH].includes(connector)) slotLeftLine = slotLeft;
-		if ([Connector.RIGHT, Connector.BOTH].includes(connector)) slotRightLine = slotRight;
+		// if ([Connector.LEFT, Connector.BOTH].includes(connector)) slotLeftLine = slotLeft;
+		if ([Connector.LEFT, Connector.BOTH].includes(connector)) leftLine = {...leftLine, ...connectorSlotLeft};
+		if ([Connector.RIGHT, Connector.BOTH].includes(connector)) rightLine = {...rightLine, ...connectorSlotRight};
 
 
 		let backSlotLine: IModel = {};
@@ -406,8 +446,6 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 
 		const boxGroundPaths: IModel = {
 			models: {
-				slotLeft: slotLeftLine,
-				slotRight: slotRightLine,
 				backSlot: backSlotLine,
 			},
 			paths: {
