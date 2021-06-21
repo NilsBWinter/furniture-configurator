@@ -426,11 +426,11 @@ export function boxCoordinates(box: Box, material: Material, machine: Machine): 
 			slotBack = new makerjs.models.Dogbone(backSlotWidth, backSlotHeight, dogboneRadius);
 		} else {
 			// normal Rectangles e.g for lasercutting
-			slotBack = new makerjs.models.Rectangle(connectorTenonLength, backSlotHeight);
+			slotBack = new makerjs.models.Rectangle(backSlotWidth, backSlotHeight);
 		}
 
 
-		slotBack.origin = [boxWidth / 2 - backSlotWidth, boxDepth - offSetEdgeY - backSlotHeight];
+		slotBack.origin = [(boxWidth / 2) - (backSlotWidth / 2), boxDepth - offSetEdgeY - backSlotHeight];
 
 
 		// if ([Connector.LEFT, Connector.BOTH].includes(connector)) slotLeftLine = slotLeft;
