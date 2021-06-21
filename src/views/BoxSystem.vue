@@ -11,17 +11,23 @@
 
 				<o-field :label="`Shelf Height:`">
 					<o-input type="number" v-model.number="shelf.height" min=0 oninput="validity.valid||(value='');" />
-					{{unitType[unit]}}
+					<div class="afterSelectText"> 
+								{{unitType[unit]}}
+							</div>
 				</o-field>
 
 				<o-field :label="`Shelf Width:`">
 					<o-input type="number" v-model.number="shelf.width" min=0 oninput="validity.valid||(value='');" />
-					{{unitType[unit]}}
+					<div class="afterSelectText"> 
+								{{unitType[unit]}}
+							</div>
 				</o-field>
 
 				<o-field :label="`Shelf Depth:`">
 					<o-input type="number" v-model.number="shelf.depth" useHtml5Validation :max="machine.processingArea.longSide" min=0 oninput="validity.valid||(value='');" />
-					{{unitType[unit]}}
+					<div class="afterSelectText"> 
+								{{unitType[unit]}}
+							</div>
 				</o-field>
 			</div>
 		</div>
@@ -95,7 +101,9 @@
 									{{ height }}
 								</option>
 							</o-select>
-							{{unitType[unit]}}
+							<div class="afterSelectText"> 
+								{{unitType[unit]}}
+							</div>
 						</o-field>
 
 						<o-field label="compartment width:">
@@ -239,7 +247,7 @@ export default {
 			required: true,
 		},
 		unit: {
-            type: Object as () => typeof unitType,
+            type: String,
             default: 'Millimeter',
         },
 	},

@@ -92,7 +92,14 @@ option,
   // }
 
   .o-ctrl-input {
-	display: contents;
+	// display: contents;
+  width: 300px;
+  }
+
+  .o-ctrl-sel {
+    right: 0;
+  width: 300px;
+
   }
 }
 
